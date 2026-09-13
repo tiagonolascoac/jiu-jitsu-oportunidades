@@ -30,3 +30,4 @@ Sistema completo de gerenciamento de aulas de Jiu-Jitsu gratuito, com controle d
 ```bash
 git clone <seu-repositorio>
 cd jiu-jitsu-manager
+"# jiu-jitsu-oportunidades" 
