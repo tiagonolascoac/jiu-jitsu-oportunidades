@@ -1,0 +1,83 @@
+.turmas-container {
+  padding: 20px;
+}
+
+.turmas-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  border-bottom: 2px solid #333;
+  padding-bottom: 15px;
+}
+
+.turmas-header h2 {
+  margin: 0;
+  font-size: 28px;
+}
+
+.form-turma {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+  border-left: 4px solid #2196F3;
+}
+
+.form-turma h3 {
+  margin-top: 0;
+  color: #333;
+}
+
+.form-turma input,
+.form-turma select {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.form-turma input:focus,
+.form-turma select:focus {
+  outline: none;
+  border-color: #2196F3;
+  box-shadow: 0 0 5px rgba(33, 150, 243, 0.3);
+}
+
+.form-turma .btn-submit {
+  background-color: #2196F3;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  width: 100%;
+  transition: background-color 0.3s;
+}
+
+.form-turma .btn-submit:hover {
+  background-color: #0b7dda;
+}
+
+.secoes-turmas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+}
+
+@media (max-width: 768px) {
+  .secoes-turmas {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .turmas-header {
+    align-items: flex-start;
+    gap: 12px;
+    flex-direction: column;
+  }
+}

@@ -1,0 +1,27 @@
+ATIVAR SUA CONTA COMO ADMINISTRADOR
+===================================
+
+1. Abra Firebase Console > Firestore Database > Data.
+2. Abra a coleção: usuarios
+3. Abra o documento cujo ID é o mesmo UID da sua conta no Firebase Authentication.
+4. Altere o campo "tipo" de "professor" para "admin".
+5. Salve.
+6. Faça logout no site e login novamente.
+
+O sistema agora reconhece três perfis:
+- admin: vê todos os dados e gerencia professores
+- professor: gerencia turmas/alunos/presenças vinculados ao seu UID
+- aluno: vê seu próprio painel/frequência
+
+GERENCIAR PROFESSORES
+=====================
+
+No menu do Admin existe a opção "Professores".
+Para transformar alguém em professor, essa pessoa deve primeiro criar uma conta normal no site.
+Depois, o Admin informa o e-mail na tela Professores e clica em "Tornar professor".
+
+IMPORTANTE SOBRE FIREBASE
+=========================
+
+O firebase.js deste pacote continua com valores de exemplo porque suas chaves reais não estavam no ZIP de trabalho.
+Use o src/firebase.js da versão que já está funcionando no seu computador ou coloque nele o firebaseConfig real do seu projeto.

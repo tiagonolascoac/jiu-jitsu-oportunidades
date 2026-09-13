@@ -1,0 +1,128 @@
+.relatorio-container {
+  padding: 20px;
+}
+
+.relatorio-header {
+  margin-bottom: 30px;
+  border-bottom: 2px solid #333;
+  padding-bottom: 15px;
+}
+
+.relatorio-header h2 {
+  margin: 0;
+  font-size: 28px;
+  color: #333;
+}
+
+.relatorio-filter {
+  margin-bottom: 30px;
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.relatorio-filter label {
+  color: #333;
+  font-weight: bold;
+  margin: 0;
+}
+
+.relatorio-filter select {
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  flex: 1;
+  max-width: 300px;
+}
+
+.relatorio-filter select:focus {
+  outline: none;
+  border-color: #2196F3;
+  box-shadow: 0 0 5px rgba(33, 150, 243, 0.3);
+}
+
+.relatorio-tabela {
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow-x: auto;
+}
+
+.relatorio-tabela table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.relatorio-tabela th {
+  background-color: #f5f5f5;
+  color: #333;
+  padding: 15px;
+  text-align: left;
+  font-weight: bold;
+  border-bottom: 2px solid #ddd;
+  font-size: 14px;
+}
+
+.relatorio-tabela td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+  color: #333;
+}
+
+.relatorio-tabela tr:hover {
+  background-color: #f9f9f9;
+}
+
+.relatorio-tabela .capitalize {
+  text-transform: capitalize;
+}
+
+.relatorio-tabela .presente {
+  color: #4CAF50;
+  font-weight: bold;
+}
+
+.relatorio-tabela .atrasado {
+  color: #FF9800;
+  font-weight: bold;
+}
+
+.relatorio-tabela .ausente {
+  color: #f44336;
+  font-weight: bold;
+}
+
+.relatorio-tabela .green {
+  color: #4CAF50;
+  font-weight: bold;
+  background-color: rgba(76, 175, 80, 0.1);
+}
+
+.relatorio-tabela .yellow {
+  color: #FF9800;
+  font-weight: bold;
+  background-color: rgba(255, 152, 0, 0.1);
+}
+
+.relatorio-tabela .red {
+  color: #f44336;
+  font-weight: bold;
+  background-color: rgba(244, 67, 54, 0.1);
+}
+
+@media (max-width: 768px) {
+  .relatorio-tabela {
+    font-size: 12px;
+  }
+
+  .relatorio-tabela th,
+  .relatorio-tabela td {
+    padding: 10px 8px;
+  }
+}
