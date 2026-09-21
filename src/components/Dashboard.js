@@ -12,6 +12,8 @@ import Alunos from './Alunos';
 import Presenca from './Presenca';
 import Relatorio from './Relatorio';
 import Professores from './Professores';
+import ConfiguracaoPresenca from './ConfiguracaoPresenca';
+import CheckinAluno from './CheckinAluno';
 import '../styles/Dashboard.css';
 
 function Dashboard({ user, userType }) {
@@ -162,6 +164,7 @@ function Dashboard({ user, userType }) {
         <div className="quick-actions-grid">
           {isAdmin && <button onClick={() => trocarPagina('professores')}>👨‍🏫 Gerenciar professores</button>}
           <button onClick={() => trocarPagina('presenca')}>✅ Lançar presença</button>
+          {isAdmin && <button onClick={() => trocarPagina('config-presenca')}>📍 Configurar local</button>}
           <button onClick={() => trocarPagina('alunos')}>👥 Gerenciar alunos</button>
           <button onClick={() => trocarPagina('turmas')}>🥋 Gerenciar turmas</button>
           <button onClick={() => trocarPagina('relatorio')}>📊 Ver frequência</button>
@@ -199,6 +202,8 @@ function Dashboard({ user, userType }) {
           </div>
         ) : (
           <>
+            <CheckinAluno aluno={aluno} user={user} onSuccess={carregarDados} />
+
             <div className="student-profile-card">
               <div><span>Turma</span><strong>{aluno.turma === 'kids' ? 'Kids' : 'Adulto'}</strong></div>
               <div><span>Faixa</span><strong className="capitalize">{aluno.faixa || 'Branca'}</strong></div>
@@ -247,7 +252,9 @@ function Dashboard({ user, userType }) {
       case 'alunos':
         return <Alunos alunos={alunos} reload={carregarDados} />;
       case 'presenca':
-        return <Presenca alunos={alunos} turmas={turmas} reload={carregarDados} />;
+        return <Presenca alunos={alunos} turmas={turmas} reload={carregarDados} currentUserId={user.uid} />;
+      case 'config-presenca':
+        return isAdmin ? <ConfiguracaoPresenca user={user} /> : renderInicioStaff();
       case 'relatorio':
         return <Relatorio alunos={alunos} presencas={presencas} />;
       default:
@@ -277,6 +284,7 @@ function Dashboard({ user, userType }) {
           <nav className="sidebar-menu">
             <button className={pagina === 'inicio' ? 'ativo' : ''} onClick={() => trocarPagina('inicio')}>🏠 Início</button>
             {isAdmin && <button className={pagina === 'professores' ? 'ativo' : ''} onClick={() => trocarPagina('professores')}>👨‍🏫 Professores</button>}
+            {isAdmin && <button className={pagina === 'config-presenca' ? 'ativo' : ''} onClick={() => trocarPagina('config-presenca')}>📍 Local da presença</button>}
             <button className={pagina === 'turmas' ? 'ativo' : ''} onClick={() => trocarPagina('turmas')}>🥋 Turmas</button>
             <button className={pagina === 'alunos' ? 'ativo' : ''} onClick={() => trocarPagina('alunos')}>👥 Alunos</button>
             <button className={pagina === 'presenca' ? 'ativo' : ''} onClick={() => trocarPagina('presenca')}>✅ Presença</button>

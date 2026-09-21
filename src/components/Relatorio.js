@@ -4,10 +4,15 @@ import '../styles/Relatorio.css';
 
 function Relatorio({ alunos, presencas }) {
   const [filtroTurma, setFiltroTurma] = useState('all');
+  const [buscaAluno, setBuscaAluno] = useState('');
 
-  const alunosFiltrados = filtroTurma === 'all'
+  const normalizar = (texto = '') => texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  const termoBusca = normalizar(buscaAluno.trim());
+
+  const alunosFiltrados = (filtroTurma === 'all'
     ? alunos
-    : alunos.filter(a => a.turma === filtroTurma);
+    : alunos.filter(a => a.turma === filtroTurma))
+    .filter(a => !termoBusca || normalizar(a.nome).includes(termoBusca));
 
   const calcularFrequencia = (alunoId) => {
     const pres = presencas.filter(p => p.alunoId === alunoId);
@@ -27,6 +32,15 @@ function Relatorio({ alunos, presencas }) {
 
       <div className="relatorio-filter">
         <label>Filtrar por turma:</label>
+
+        <input
+          className="relatorio-busca"
+          type="search"
+          value={buscaAluno}
+          onChange={(e) => setBuscaAluno(e.target.value)}
+          placeholder="Buscar aluno..."
+          aria-label="Buscar aluno"
+        />
 
         <select
           value={filtroTurma}
@@ -68,9 +82,12 @@ function Relatorio({ alunos, presencas }) {
 
               return (
                 <tr key={aluno.id}>
-                  <td>{aluno.nome}</td>
+                  <td className="aluno-cell">
+                    <span className="aluno-nome">{aluno.nome}</span>
+                    <span className="aluno-turma-mobile capitalize">{aluno.turma}</span>
+                  </td>
 
-                  <td className="capitalize">
+                  <td className="capitalize turma-desktop">
                     {aluno.turma}
                   </td>
 

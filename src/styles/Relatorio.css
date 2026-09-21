@@ -126,3 +126,38 @@
     padding: 10px 8px;
   }
 }
+
+
+/* Mobile compacto: evita rolagem horizontal e prioriza os dados essenciais */
+.aluno-turma-mobile { display: none; }
+
+@media (max-width: 768px) {
+  .relatorio-container { padding: 12px; }
+  .relatorio-header { margin-bottom: 14px; padding-bottom: 10px; }
+  .relatorio-header h2 { font-size: 22px; }
+  .relatorio-filter { margin-bottom: 14px; padding: 10px 12px; gap: 8px; }
+  .relatorio-filter label { font-size: 12px; }
+  .relatorio-filter select { min-width: 0; padding: 8px; font-size: 12px; }
+  .relatorio-tabela { overflow-x: hidden; border-radius: 7px; }
+  .relatorio-tabela table { table-layout: fixed; }
+  .relatorio-tabela th, .relatorio-tabela td { padding: 7px 5px; font-size: 11px; }
+  .relatorio-tabela th:first-child { width: 42%; }
+  .relatorio-tabela th:nth-child(2), .relatorio-tabela td:nth-child(2) { display: none; }
+  .relatorio-tabela th:nth-child(3), .relatorio-tabela th:nth-child(4) { width: 15%; text-align: center; }
+  .relatorio-tabela th:nth-child(5) { width: 28%; text-align: center; }
+  .relatorio-tabela td:nth-child(3), .relatorio-tabela td:nth-child(4), .relatorio-tabela td:nth-child(5) { text-align: center; }
+  .aluno-cell { line-height: 1.15; }
+  .aluno-nome { display: block; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .aluno-turma-mobile { display: block; margin-top: 2px; color: #777; font-size: 9px; font-weight: 400; }
+}
+
+.relatorio-busca {
+  flex: 1; max-width: 300px; padding: 10px 12px; border: 1px solid #ddd;
+  border-radius: 4px; font-size: 14px; box-sizing: border-box;
+}
+.relatorio-busca:focus { outline: none; border-color: #2196f3; box-shadow: 0 0 5px rgba(33,150,243,.18); }
+@media (max-width: 768px) {
+  .relatorio-filter { display: grid; grid-template-columns: 1fr 1fr; }
+  .relatorio-filter label { grid-column: 1 / -1; }
+  .relatorio-busca, .relatorio-filter select { width: 100%; max-width: none; height: 36px; }
+}
