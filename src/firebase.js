@@ -3,7 +3,7 @@ import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 
-const firebaseConfig = {
+export const firebaseConfig = {
   apiKey: "AIzaSyBoRHRTLfYXr3Y_tlKTSiEFabIkm2d_IOE",
   authDomain: "jiu-jitsu-oportunidades.firebaseapp.com",
   projectId: "jiu-jitsu-oportunidades",

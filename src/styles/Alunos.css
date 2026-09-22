@@ -181,3 +181,5 @@
   padding: 30px;
   font-style: italic;
 }
+
+.alunos-filtros{display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px;margin:16px 0}.alunos-filtros input,.alunos-filtros select,.aluno-edicao select{padding:10px;border:1px solid #ddd;border-radius:8px}.aluno-gerencia-card{align-items:center}.aluno-edicao{display:flex;gap:8px;flex-wrap:wrap}.aluno-info small{display:block;margin-top:4px;color:#666}@media(max-width:768px){.alunos-filtros{grid-template-columns:1fr}.aluno-gerencia-card{display:block}.aluno-edicao{margin:10px 0}.aluno-edicao select{width:100%}}

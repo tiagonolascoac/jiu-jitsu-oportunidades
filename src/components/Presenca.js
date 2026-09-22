@@ -8,7 +8,7 @@ function Presenca({ alunos, turmas, reload, currentUserId }) {
   const [dataSelecionada, setDataSelecionada] = useState(new Date().toISOString().split('T')[0]);
   const [turmaSelecionada, setTurmaSelecionada] = useState('');
   const [notas, setNotas] = useState({});
-  const [presencasGeo, setPresencasGeo] = useState([]);
+  const [presencasRegistradas, setPresencasRegistradas] = useState([]);
   const [carregandoGeo, setCarregandoGeo] = useState(false);
   const [buscaAluno, setBuscaAluno] = useState('');
   const [filtroLista, setFiltroLista] = useState('todos');
@@ -22,7 +22,7 @@ function Presenca({ alunos, turmas, reload, currentUserId }) {
   useEffect(() => {
     let ativo = true;
 
-    const carregarPresencasGeo = async () => {
+    const carregarPresencasRegistradas = async () => {
       if (!dataSelecionada) return;
       setCarregandoGeo(true);
       try {
@@ -30,26 +30,31 @@ function Presenca({ alunos, turmas, reload, currentUserId }) {
           query(collection(db, 'presencas'), where('data', '==', dataSelecionada))
         );
         if (!ativo) return;
-        setPresencasGeo(
-          snapshot.docs
-            .map(item => ({ id: item.id, ...item.data() }))
-            .filter(item => item.metodo === 'geolocalizacao' && item.status === 'presente')
+        setPresencasRegistradas(
+          snapshot.docs.map(item => ({ id: item.id, ...item.data() }))
         );
       } catch (error) {
         console.error('Erro ao carregar presenças por geolocalização:', error);
-        if (ativo) setPresencasGeo([]);
+        if (ativo) setPresencasRegistradas([]);
       } finally {
         if (ativo) setCarregandoGeo(false);
       }
     };
 
-    carregarPresencasGeo();
+    carregarPresencasRegistradas();
     return () => { ativo = false; };
   }, [dataSelecionada]);
 
-  const idsComPresencaGeo = useMemo(
-    () => new Set(presencasGeo.map(item => item.alunoId)),
-    [presencasGeo]
+  const registrosDaTurma = useMemo(
+    () => presencasRegistradas.filter(item =>
+      !item.turmaSelecionada || item.turmaSelecionada === turmaSelecionada
+    ),
+    [presencasRegistradas, turmaSelecionada]
+  );
+
+  const idsJaRegistrados = useMemo(
+    () => new Set(registrosDaTurma.map(item => item.alunoId)),
+    [registrosDaTurma]
   );
 
   const normalizar = (texto = '') => texto
@@ -60,14 +65,14 @@ function Presenca({ alunos, turmas, reload, currentUserId }) {
   const termoBusca = normalizar(buscaAluno.trim());
   const correspondeBusca = (aluno) => !termoBusca || normalizar(aluno.nome).includes(termoBusca);
 
-  const alunosComPresencaGeo = alunosDaTurma
-    .filter(aluno => idsComPresencaGeo.has(aluno.id))
+  const alunosJaRegistrados = alunosDaTurma
+    .filter(aluno => idsJaRegistrados.has(aluno.id))
     .filter(correspondeBusca);
   const alunosPendentes = alunosDaTurma
-    .filter(aluno => !idsComPresencaGeo.has(aluno.id))
+    .filter(aluno => !idsJaRegistrados.has(aluno.id))
     .filter(correspondeBusca);
 
-  const totalConfirmados = alunosDaTurma.filter(aluno => idsComPresencaGeo.has(aluno.id)).length;
+  const totalConfirmados = alunosDaTurma.filter(aluno => idsJaRegistrados.has(aluno.id)).length;
   const totalPendentes = alunosDaTurma.length - totalConfirmados;
 
   const handleTogglePresenca = (alunoId, status) => {
@@ -85,7 +90,7 @@ function Presenca({ alunos, turmas, reload, currentUserId }) {
 
     try {
       for (const alunoId in presencas) {
-        if (presencas[alunoId] && !idsComPresencaGeo.has(alunoId)) {
+        if (presencas[alunoId] && !idsJaRegistrados.has(alunoId)) {
           await addDoc(collection(db, 'presencas'), {
             alunoId,
             turmaSelecionada,
@@ -98,6 +103,12 @@ function Presenca({ alunos, turmas, reload, currentUserId }) {
           });
         }
       }
+      // Recarrega os registros da data para que os alunos desapareçam imediatamente
+      // e continuem fora da lista mesmo após atualizar a página.
+      const snapshotAtualizado = await getDocs(
+        query(collection(db, 'presencas'), where('data', '==', dataSelecionada))
+      );
+      setPresencasRegistradas(snapshotAtualizado.docs.map(item => ({ id: item.id, ...item.data() })));
       alert('Presença registrada com sucesso!');
       setPresencas({});
       setNotas({});
@@ -149,24 +160,24 @@ function Presenca({ alunos, turmas, reload, currentUserId }) {
             <p className="vazio">Verificando presenças já marcadas...</p>
           ) : (
             <>
-              {filtroLista !== 'pendentes' && alunosComPresencaGeo.length > 0 && (
+              {filtroLista !== 'pendentes' && alunosJaRegistrados.length > 0 && (
                 <div className="presencas-confirmadas">
                   <div className="presencas-confirmadas-titulo">
                     <h3>✓ Presenças já marcadas</h3>
-                    <span>{alunosComPresencaGeo.length}</span>
+                    <span>{alunosJaRegistrados.length}</span>
                   </div>
                   <div className="presencas-confirmadas-lista">
-                    {alunosComPresencaGeo.map(aluno => {
-                      const registro = presencasGeo.find(p => p.alunoId === aluno.id);
+                    {alunosJaRegistrados.map(aluno => {
+                      const registro = registrosDaTurma.find(p => p.alunoId === aluno.id);
                       return (
                         <div key={aluno.id} className="presenca-confirmada-item">
                           <div>
                             <strong>{aluno.nome}</strong>
-                            <small>Check-in por geolocalização</small>
+                            <small>{registro?.metodo === 'geolocalizacao' ? 'Check-in por geolocalização' : 'Lançado pelo professor'}</small>
                           </div>
                           <div className="presenca-confirmada-status">
-                            ✓ Presente
-                            {Number.isFinite(Number(registro?.distanciaMetros)) && (
+                            {registro?.status === 'presente' ? '✓ Presente' : '✕ Ausente'}
+                            {registro?.metodo === 'geolocalizacao' && Number.isFinite(Number(registro?.distanciaMetros)) && (
                               <small>{registro.distanciaMetros} m do local</small>
                             )}
                           </div>
@@ -179,7 +190,7 @@ function Presenca({ alunos, turmas, reload, currentUserId }) {
 
               {filtroLista !== 'presentes' && <h3>Alunos para lançar presença</h3>}
               {filtroLista !== 'presentes' && (alunosPendentes.length === 0 ? (
-                <p className="vazio">Todos os alunos desta turma já marcaram presença por geolocalização.</p>
+                <p className="vazio">Todos os alunos desta turma já tiveram a presença registrada nesta data.</p>
               ) : (
                 <>
                   <div className="presenca-items">
@@ -188,7 +199,6 @@ function Presenca({ alunos, turmas, reload, currentUserId }) {
                         <div className="presenca-info"><h4>{aluno.nome}</h4></div>
                         <div className="presenca-botoes">
                           <button className={`btn-status ${presencas[aluno.id] === 'presente' ? 'ativo' : ''}`} onClick={() => handleTogglePresenca(aluno.id, 'presente')}>✓ Presente</button>
-                          <button className={`btn-status ${presencas[aluno.id] === 'atrasado' ? 'ativo' : ''}`} onClick={() => handleTogglePresenca(aluno.id, 'atrasado')}>⏰ Atrasado</button>
                           <button className={`btn-status ${presencas[aluno.id] === 'ausente' ? 'ativo' : ''}`} onClick={() => handleTogglePresenca(aluno.id, 'ausente')}>✕ Ausente</button>
                         </div>
                         <input type="text" placeholder="Nota (opcional)" value={notas[aluno.id] || ''} onChange={(e) => setNotas(prev => ({ ...prev, [aluno.id]: e.target.value }))} className="presenca-nota" />
@@ -198,7 +208,7 @@ function Presenca({ alunos, turmas, reload, currentUserId }) {
                   <button className="btn-salvar" onClick={handleRegistrarPresencas}>💾 Registrar Presença</button>
                 </>
               ))}
-              {buscaAluno && alunosComPresencaGeo.length === 0 && alunosPendentes.length === 0 && (
+              {buscaAluno && alunosJaRegistrados.length === 0 && alunosPendentes.length === 0 && (
                 <p className="vazio">Nenhum aluno encontrado para “{buscaAluno}”.</p>
               )}
             </>

@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
 } from 'firebase/auth';
-import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, doc, getDocs, setDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, db } from '../firebase';
+import { CIDADES_ACRE, nomeCidade } from '../data/cidadesAcre';
 import '../styles/Auth.css';
 
 const traduzirErro = (codigo) => {
@@ -27,10 +28,16 @@ function Auth() {
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
-  const [turma, setTurma] = useState('adulto');
+  const [cidadeId, setCidadeId] = useState('');
+  const [turmaId, setTurmaId] = useState('');
+  const [turmas, setTurmas] = useState([]);
   const [erro, setErro] = useState('');
   const [sucesso, setSucesso] = useState('');
   const [carregando, setCarregando] = useState(false);
+
+  useEffect(() => {
+    getDocs(collection(db, 'turmas')).then(snap => setTurmas(snap.docs.map(d => ({ id:d.id, ...d.data() })))).catch(console.error);
+  }, []);
 
   const limparMensagens = () => {
     setErro('');
@@ -65,7 +72,10 @@ function Auth() {
         nome: nome.trim(),
         email: email.trim().toLowerCase(),
         tipo: 'aluno',
-        turma,
+        cidadeId,
+        cidadeNome: nomeCidade(cidadeId),
+        turmaId,
+        turma: turmas.find(t => t.id === turmaId)?.tipo || '',
         ativo: true,
         criadoEm: serverTimestamp(),
       });
@@ -75,7 +85,10 @@ function Auth() {
         usuarioId: credential.user.uid,
         nome: nome.trim(),
         email: email.trim().toLowerCase(),
-        turma,
+        cidadeId,
+        cidadeNome: nomeCidade(cidadeId),
+        turmaId,
+        turma: turmas.find(t => t.id === turmaId)?.tipo || '',
         faixa: 'branca',
         ativo: true,
         criadoPeloProprioAluno: true,
@@ -136,13 +149,13 @@ function Auth() {
                 disabled={carregando}
               />
 
-              <select
-                value={turma}
-                onChange={(e) => setTurma(e.target.value)}
-                disabled={carregando}
-              >
-                <option value="adulto">Adulto</option>
-                <option value="kids">Kids</option>
+              <select value={cidadeId} onChange={(e) => { setCidadeId(e.target.value); setTurmaId(''); }} disabled={carregando} required>
+                <option value="">Selecione sua cidade</option>
+                {CIDADES_ACRE.map(c => <option key={c.id} value={c.id}>{c.nome}</option>)}
+              </select>
+              <select value={turmaId} onChange={(e) => setTurmaId(e.target.value)} disabled={carregando || !cidadeId} required>
+                <option value="">Selecione sua turma</option>
+                {turmas.filter(t => t.cidadeId === cidadeId).map(t => <option key={t.id} value={t.id}>{t.nome}</option>)}
               </select>
             </>
           )}

@@ -75,7 +75,7 @@ function Relatorio({ alunos, presencas }) {
               ).length;
 
               const ausentes = pres.filter(
-                p => p.status === 'ausente'
+                p => p.status === 'ausente' || p.status === 'atrasado'
               ).length;
 
               const frequencia = calcularFrequencia(aluno.id);

@@ -81,3 +81,28 @@
     flex-direction: column;
   }
 }
+
+.turma-professores { margin: 12px 0; }
+.turma-professores-label { display:block; font-size:12px; font-weight:700; color:#555; margin-bottom:7px; }
+.professor-tags { display:flex; flex-wrap:wrap; gap:6px; }
+.professor-tag { background:#f4f4f4; border:1px solid #e1e1e1; border-radius:999px; padding:5px 9px; font-size:12px; color:#333; }
+.vazio-tag { color:#777; }
+.btn-professores { width:100%; margin:6px 0 10px; padding:9px 10px; border:1px solid #d71920; background:#fff; color:#b51218; border-radius:6px; font-weight:700; cursor:pointer; }
+.professores-selector { margin:8px 0 16px; }
+.professores-selector > label { display:block; font-weight:700; margin-bottom:8px; color:#333; }
+.professores-selector > small { display:block; margin-top:7px; color:#666; }
+.professores-opcoes { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; max-height:190px; overflow:auto; }
+.professor-opcao { display:flex; align-items:center; gap:8px; border:1px solid #ddd; border-radius:7px; padding:9px; cursor:pointer; background:#fff; }
+.professor-opcao.selecionado { border-color:#d71920; background:#fff6f6; }
+.professor-opcao input { width:auto !important; margin:0 !important; }
+.editar-professores { margin:10px 0; padding:10px; background:#fafafa; border-radius:8px; }
+.turma-acoes { display:flex; gap:8px; }
+.btn-salvar-professores,.btn-cancelar { flex:1; padding:9px; border-radius:6px; cursor:pointer; font-weight:700; }
+.btn-salvar-professores { border:0; background:#d71920; color:#fff; }
+.btn-cancelar { border:1px solid #ccc; background:#fff; color:#444; }
+@media (max-width:768px) {
+ .turmas-container { padding:12px; }
+ .professores-opcoes { grid-template-columns:1fr; max-height:160px; }
+ .turma-acoes { flex-direction:column; }
+ .professor-tag { font-size:11px; padding:4px 8px; }
+}

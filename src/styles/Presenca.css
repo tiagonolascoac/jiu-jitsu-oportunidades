@@ -225,17 +225,18 @@
 
   .presenca-items { gap: 4px; margin-bottom: 70px; }
   .presenca-item {
-    display: grid; grid-template-columns: minmax(75px, 1fr) auto;
+    display: grid; grid-template-columns: minmax(90px, 1fr) auto;
     gap: 5px 7px; padding: 7px 8px; border-left-width: 3px; flex-wrap: nowrap;
   }
   .presenca-info { min-width: 0; align-self: center; }
   .presenca-info h4 { min-width: 0; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .presenca-botoes { gap: 3px; flex-wrap: nowrap; }
-  .btn-status { width: 34px; height: 30px; padding: 0; font-size: 0; border-width: 1px; border-radius: 5px; }
-  .btn-status::first-letter { font-size: 14px; }
-  .btn-status:nth-child(1)::after { content: '✓'; font-size: 15px; }
-  .btn-status:nth-child(2)::after { content: '⏰'; font-size: 13px; }
-  .btn-status:nth-child(3)::after { content: '✕'; font-size: 14px; }
+  .presenca-botoes { gap: 5px; flex-wrap: nowrap; }
+  .btn-status {
+    width: auto; min-width: 76px; height: 32px; padding: 0 9px;
+    font-size: 11px; font-weight: 700; border-width: 1px; border-radius: 6px;
+    white-space: nowrap;
+  }
+  .btn-status::after { content: none !important; }
   .presenca-nota { grid-column: 1 / -1; min-width: 0; width: 100%; box-sizing: border-box; padding: 5px 7px; font-size: 10px; height: 27px; }
   .btn-salvar {
     position: sticky; bottom: 8px; z-index: 5; margin-top: -56px;

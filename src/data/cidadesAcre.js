@@ -1,0 +1,26 @@
+export const CIDADES_ACRE = [
+  { id: '1200013', nome: 'Acrelândia', uf: 'AC' },
+  { id: '1200054', nome: 'Assis Brasil', uf: 'AC' },
+  { id: '1200104', nome: 'Brasiléia', uf: 'AC' },
+  { id: '1200138', nome: 'Bujari', uf: 'AC' },
+  { id: '1200179', nome: 'Capixaba', uf: 'AC' },
+  { id: '1200203', nome: 'Cruzeiro do Sul', uf: 'AC' },
+  { id: '1200252', nome: 'Epitaciolândia', uf: 'AC' },
+  { id: '1200302', nome: 'Feijó', uf: 'AC' },
+  { id: '1200328', nome: 'Jordão', uf: 'AC' },
+  { id: '1200336', nome: 'Mâncio Lima', uf: 'AC' },
+  { id: '1200344', nome: 'Manoel Urbano', uf: 'AC' },
+  { id: '1200351', nome: 'Marechal Thaumaturgo', uf: 'AC' },
+  { id: '1200385', nome: 'Plácido de Castro', uf: 'AC' },
+  { id: '1200807', nome: 'Porto Acre', uf: 'AC' },
+  { id: '1200393', nome: 'Porto Walter', uf: 'AC' },
+  { id: '1200401', nome: 'Rio Branco', uf: 'AC' },
+  { id: '1200427', nome: 'Rodrigues Alves', uf: 'AC' },
+  { id: '1200435', nome: 'Santa Rosa do Purus', uf: 'AC' },
+  { id: '1200500', nome: 'Sena Madureira', uf: 'AC' },
+  { id: '1200450', nome: 'Senador Guiomard', uf: 'AC' },
+  { id: '1200609', nome: 'Tarauacá', uf: 'AC' },
+  { id: '1200708', nome: 'Xapuri', uf: 'AC' },
+];
+
+export const nomeCidade = (id) => CIDADES_ACRE.find(c => c.id === id)?.nome || '';

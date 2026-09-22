@@ -49,3 +49,77 @@
   .professor-status { grid-column: 2; justify-self: start; }
   .professor-actions { grid-column: 1 / -1; flex-direction: column; }
 }
+
+
+/* Cadastro direto de professor */
+.professores-top-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin: 0 0 14px;
+}
+.criar-professor-button {
+  border: 0;
+  border-radius: 8px;
+  background: #c9141b;
+  color: #fff;
+  padding: 11px 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.professor-create-card {
+  background: #fff;
+  border: 1px solid #ececec;
+  border-left: 4px solid #c9141b;
+  border-radius: 10px;
+  padding: 18px;
+  margin-bottom: 16px;
+}
+.professor-create-card h3 { margin: 0 0 5px; }
+.professor-create-card p { margin: 0 0 14px; color: #666; }
+.professor-create-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1.3fr 1fr auto;
+  gap: 10px;
+}
+.professor-create-grid input {
+  min-width: 0;
+  padding: 11px 12px;
+  border: 1px solid #ddd;
+  border-radius: 7px;
+  box-sizing: border-box;
+}
+.professor-create-grid button {
+  border: 0;
+  border-radius: 7px;
+  background: #c9141b;
+  color: #fff;
+  padding: 11px 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+@media (max-width: 768px) {
+  .professores-top-actions { justify-content: stretch; }
+  .criar-professor-button { width: 100%; }
+  .professor-create-card { padding: 14px; }
+  .professor-create-grid { grid-template-columns: 1fr; }
+  .professor-create-grid input,
+  .professor-create-grid button { width: 100%; min-height: 44px; }
+}
+
+.adicionar-professor-button {
+  border: 1px solid #c9141b;
+  border-radius: 8px;
+  background: #fff;
+  color: #c9141b;
+  padding: 11px 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.adicionar-professor-button:hover {
+  background: #fff5f5;
+}
+@media (max-width: 768px) {
+  .adicionar-professor-button { width: 100%; }
+}
+
+.professor-cidade-select{padding:9px;border:1px solid #ddd;border-radius:8px;max-width:210px}@media(max-width:768px){.professor-cidade-select{max-width:none;width:100%}}

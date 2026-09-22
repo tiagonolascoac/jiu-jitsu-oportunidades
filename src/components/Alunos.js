@@ -1,254 +1,93 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { db, auth } from '../firebase';
 import { addDoc, collection, updateDoc, deleteDoc, doc } from 'firebase/firestore';
+import { CIDADES_ACRE, nomeCidade } from '../data/cidadesAcre';
 import '../styles/Alunos.css';
 
 const FAIXAS = [
-  { valor: 'branca', cor: '#FFFFFF', label: 'Branca' },
-  { valor: 'azul', cor: '#0099FF', label: 'Azul' },
-  { valor: 'roxa', cor: '#9933FF', label: 'Roxa' },
-  { valor: 'marrom', cor: '#8B4513', label: 'Marrom' },
-  { valor: 'preta', cor: '#000000', label: 'Preta' },
+  { valor:'branca', label:'Branca' }, { valor:'azul', label:'Azul' },
+  { valor:'roxa', label:'Roxa' }, { valor:'marrom', label:'Marrom' }, { valor:'preta', label:'Preta' }
 ];
 
-function Alunos({ alunos, reload }) {
-  const [novoAluno, setNovoAluno] = useState({ 
-    nome: '', 
-    email: '', 
-    turma: 'adulto', 
-    faixa: 'branca' 
-  });
-  const [mostrarForm, setMostrarForm] = useState(false);
+function Alunos({ alunos, turmas = [], reload, isAdmin=false, professorCidadeId='' }) {
+  const cidadeInicial = isAdmin ? '' : professorCidadeId;
+  const [novoAluno,setNovoAluno]=useState({nome:'',email:'',cidadeId:cidadeInicial,turmaId:'',faixa:'branca'});
+  const [mostrarForm,setMostrarForm]=useState(false);
+  const [busca,setBusca]=useState('');
+  const [filtroCidade,setFiltroCidade]=useState('');
+  const [filtroTurma,setFiltroTurma]=useState('');
 
-  const handleAdicionarAluno = async (e) => {
+  const turmasCidade = (cidadeId) => turmas.filter(t => !cidadeId || t.cidadeId === cidadeId);
+  const turmaNome = a => turmas.find(t=>t.id===a.turmaId)?.nome || (a.turma === 'kids' ? 'Kids' : a.turma === 'adulto' ? 'Adulto' : 'Sem turma');
+
+  const visiveis=useMemo(()=>alunos.filter(a=>{
+    const texto=`${a.nome||''} ${a.email||''}`.toLowerCase();
+    return texto.includes(busca.toLowerCase()) && (!filtroCidade || a.cidadeId===filtroCidade) && (!filtroTurma || a.turmaId===filtroTurma);
+  }),[alunos,busca,filtroCidade,filtroTurma]);
+
+  const adicionar=async e=>{
     e.preventDefault();
-    if (!novoAluno.nome.trim()) {
-      alert('Por favor, preencha o nome do aluno');
-      return;
-    }
-
-    try {
-      await addDoc(collection(db, 'alunos'), {
-        ...novoAluno,
-        professorId: auth.currentUser.uid,
-        ativo: true,
-        dataCriacao: new Date(),
-      });
-      setNovoAluno({ nome: '', email: '', turma: 'adulto', faixa: 'branca' });
-      setMostrarForm(false);
-      reload();
-    } catch (error) {
-      console.error('Erro ao adicionar aluno:', error);
-      alert('Erro ao adicionar aluno');
-    }
+    const turma=turmas.find(t=>t.id===novoAluno.turmaId);
+    if(!novoAluno.nome.trim() || !novoAluno.cidadeId || !turma) return alert('Informe nome, cidade e turma.');
+    await addDoc(collection(db,'alunos'),{
+      ...novoAluno, cidadeNome:nomeCidade(novoAluno.cidadeId),
+      turma:turma.tipo, professorId:auth.currentUser.uid, ativo:true, dataCriacao:new Date()
+    });
+    setNovoAluno({nome:'',email:'',cidadeId:cidadeInicial,turmaId:'',faixa:'branca'});
+    setMostrarForm(false); reload();
   };
 
-  const handleEditarFaixa = async (alunoId, novaFaixa) => {
-    try {
-      await updateDoc(doc(db, 'alunos', alunoId), {
-        faixa: novaFaixa,
-      });
-      reload();
-    } catch (error) {
-      console.error('Erro ao atualizar faixa:', error);
-    }
+  const atualizar=async (aluno, campos)=>{
+    const dados={...campos};
+    if(campos.cidadeId) dados.cidadeNome=nomeCidade(campos.cidadeId);
+    if(campos.turmaId){ const t=turmas.find(x=>x.id===campos.turmaId); if(t) dados.turma=t.tipo; }
+    await updateDoc(doc(db,'alunos',aluno.id),dados); reload();
   };
 
-  const handleToggleAtivo = async (alunoId, ativo) => {
-    try {
-      await updateDoc(doc(db, 'alunos', alunoId), {
-        ativo: !ativo,
-      });
-      reload();
-    } catch (error) {
-      console.error('Erro ao desativar aluno:', error);
-    }
+  const trocarCidade=async (aluno,cidadeId)=>{
+    if(!isAdmin) return;
+    await atualizar(aluno,{cidadeId,cidadeNome:nomeCidade(cidadeId),turmaId:'',turma:''});
   };
 
-  const handleDeletarAluno = async (alunoId) => {
-    if (window.confirm('Tem certeza que deseja remover este aluno permanentemente?')) {
-      try {
-        await deleteDoc(doc(db, 'alunos', alunoId));
-        reload();
-      } catch (error) {
-        console.error('Erro ao deletar aluno:', error);
-      }
-    }
-  };
+  return <div className="alunos-container">
+    <div className="alunos-header"><h2>Gerenciar Alunos</h2><button className="btn-adicionar" onClick={()=>setMostrarForm(!mostrarForm)}>{mostrarForm?'✕ Fechar':'+ Novo Aluno'}</button></div>
 
-  const alunosAtivos = alunos.filter(a => a.ativo);
-  const alunosAdulto = alunosAtivos.filter(a => a.turma === 'adulto');
-  const alunosKids = alunosAtivos.filter(a => a.turma === 'kids');
+    {mostrarForm && <form onSubmit={adicionar} className="form-aluno">
+      <h3>Adicionar Novo Aluno</h3>
+      <input placeholder="Nome do aluno" value={novoAluno.nome} onChange={e=>setNovoAluno({...novoAluno,nome:e.target.value})} required/>
+      <input type="email" placeholder="E-mail (opcional)" value={novoAluno.email} onChange={e=>setNovoAluno({...novoAluno,email:e.target.value})}/>
+      <select value={novoAluno.cidadeId} disabled={!isAdmin} onChange={e=>setNovoAluno({...novoAluno,cidadeId:e.target.value,turmaId:''})} required>
+        <option value="">Selecione a cidade</option>{CIDADES_ACRE.map(c=><option key={c.id} value={c.id}>{c.nome}</option>)}
+      </select>
+      <select value={novoAluno.turmaId} onChange={e=>setNovoAluno({...novoAluno,turmaId:e.target.value})} required>
+        <option value="">Selecione a turma</option>{turmasCidade(novoAluno.cidadeId).map(t=><option key={t.id} value={t.id}>{t.nome}</option>)}
+      </select>
+      <select value={novoAluno.faixa} onChange={e=>setNovoAluno({...novoAluno,faixa:e.target.value})}>{FAIXAS.map(f=><option key={f.valor} value={f.valor}>{f.label}</option>)}</select>
+      <button className="btn-submit">Adicionar</button>
+    </form>}
 
-  const getFaixaInfo = (faixa) => FAIXAS.find(f => f.valor === faixa) || FAIXAS[0];
-
-  return (
-    <div className="alunos-container">
-      <div className="alunos-header">
-        <h2>Gerenciar Alunos</h2>
-        <button className="btn-adicionar" onClick={() => setMostrarForm(!mostrarForm)}>
-          {mostrarForm ? '✕ Fechar' : '+ Novo Aluno'}
-        </button>
-      </div>
-
-      {mostrarForm && (
-        <form onSubmit={handleAdicionarAluno} className="form-aluno">
-          <h3>Adicionar Novo Aluno</h3>
-          <input
-            type="text"
-            placeholder="Nome do aluno"
-            value={novoAluno.nome}
-            onChange={(e) => setNovoAluno({ ...novoAluno, nome: e.target.value })}
-            required
-          />
-          <input
-            type="email"
-            placeholder="Email (opcional)"
-            value={novoAluno.email}
-            onChange={(e) => setNovoAluno({ ...novoAluno, email: e.target.value })}
-          />
-          <select 
-            value={novoAluno.turma} 
-            onChange={(e) => setNovoAluno({ ...novoAluno, turma: e.target.value })}
-          >
-            <option value="adulto">Adulto</option>
-            <option value="kids">Kids</option>
-          </select>
-          <select 
-            value={novoAluno.faixa} 
-            onChange={(e) => setNovoAluno({ ...novoAluno, faixa: e.target.value })}
-          >
-            {FAIXAS.map(faixa => (
-              <option key={faixa.valor} value={faixa.valor}>
-                {faixa.label}
-              </option>
-            ))}
-          </select>
-          <button type="submit" className="btn-submit">Adicionar</button>
-        </form>
-      )}
-
-      <div className="secoes-alunos">
-        <section className="secao-turma">
-          <h3>👨‍🏫 Turma Adulto ({alunosAdulto.length})</h3>
-          <div className="lista-alunos">
-            {alunosAdulto.length === 0 ? (
-              <p className="vazio">Nenhum aluno nesta turma</p>
-            ) : (
-              alunosAdulto.map(aluno => {
-                const faixaInfo = getFaixaInfo(aluno.faixa);
-                return (
-                  <div key={aluno.id} className="card-aluno">
-                    <div className="aluno-info">
-                      <h4>{aluno.nome}</h4>
-                      <p className="email">{aluno.email || 'Sem email'}</p>
-                    </div>
-                    <div className="aluno-faixa">
-                      <select 
-                        value={aluno.faixa}
-                        onChange={(e) => handleEditarFaixa(aluno.id, e.target.value)}
-                        className="faixa-select"
-                      >
-                        {FAIXAS.map(faixa => (
-                          <option key={faixa.valor} value={faixa.valor}>
-                            {faixa.label}
-                          </option>
-                        ))}
-                      </select>
-                      <div 
-                        className="faixa-badge"
-                        style={{ 
-                          backgroundColor: faixaInfo.cor,
-                          color: faixaInfo.cor === '#FFFFFF' ? '#000' : '#fff'
-                        }}
-                      >
-                        {faixaInfo.label}
-                      </div>
-                    </div>
-                    <div className="aluno-acoes">
-                      <button 
-                        className="btn-desativar"
-                        onClick={() => handleToggleAtivo(aluno.id, aluno.ativo)}
-                        title="Desativar aluno"
-                      >
-                        👁️
-                      </button>
-                      <button 
-                        className="btn-deletar"
-                        onClick={() => handleDeletarAluno(aluno.id)}
-                        title="Remover aluno"
-                      >
-                        🗑️
-                      </button>
-                    </div>
-                  </div>
-                );
-              })
-            )}
-          </div>
-        </section>
-
-        <section className="secao-turma">
-          <h3>👶 Turma Kids ({alunosKids.length})</h3>
-          <div className="lista-alunos">
-            {alunosKids.length === 0 ? (
-              <p className="vazio">Nenhum aluno nesta turma</p>
-            ) : (
-              alunosKids.map(aluno => {
-                const faixaInfo = getFaixaInfo(aluno.faixa);
-                return (
-                  <div key={aluno.id} className="card-aluno">
-                    <div className="aluno-info">
-                      <h4>{aluno.nome}</h4>
-                      <p className="email">{aluno.email || 'Sem email'}</p>
-                    </div>
-                    <div className="aluno-faixa">
-                      <select 
-                        value={aluno.faixa}
-                        onChange={(e) => handleEditarFaixa(aluno.id, e.target.value)}
-                        className="faixa-select"
-                      >
-                        {FAIXAS.map(faixa => (
-                          <option key={faixa.valor} value={faixa.valor}>
-                            {faixa.label}
-                          </option>
-                        ))}
-                      </select>
-                      <div 
-                        className="faixa-badge"
-                        style={{ 
-                          backgroundColor: faixaInfo.cor,
-                          color: faixaInfo.cor === '#FFFFFF' ? '#000' : '#fff'
-                        }}
-                      >
-                        {faixaInfo.label}
-                      </div>
-                    </div>
-                    <div className="aluno-acoes">
-                      <button 
-                        className="btn-desativar"
-                        onClick={() => handleToggleAtivo(aluno.id, aluno.ativo)}
-                        title="Desativar aluno"
-                      >
-                        👁️
-                      </button>
-                      <button 
-                        className="btn-deletar"
-                        onClick={() => handleDeletarAluno(aluno.id)}
-                        title="Remover aluno"
-                      >
-                        🗑️
-                      </button>
-                    </div>
-                  </div>
-                );
-              })
-            )}
-          </div>
-        </section>
-      </div>
+    <div className="alunos-filtros">
+      <input placeholder="🔎 Buscar aluno..." value={busca} onChange={e=>setBusca(e.target.value)}/>
+      {isAdmin && <select value={filtroCidade} onChange={e=>{setFiltroCidade(e.target.value);setFiltroTurma('')}}><option value="">Todas as cidades</option>{CIDADES_ACRE.map(c=><option key={c.id} value={c.id}>{c.nome}</option>)}</select>}
+      <select value={filtroTurma} onChange={e=>setFiltroTurma(e.target.value)}><option value="">Todas as turmas</option>{turmasCidade(filtroCidade || professorCidadeId).map(t=><option key={t.id} value={t.id}>{t.nome}</option>)}</select>
     </div>
-  );
-}
 
+    <div className="lista-alunos alunos-gerenciaveis">
+      {visiveis.length===0 ? <p className="vazio">Nenhum aluno encontrado.</p> : visiveis.map(a=><div className="card-aluno aluno-gerencia-card" key={a.id}>
+        <div className="aluno-info"><h4>{a.nome}</h4><p className="email">{a.email||'Sem e-mail'}</p><small>{nomeCidade(a.cidadeId)||a.cidadeNome||'Cidade não definida'} • {turmaNome(a)}</small></div>
+        <div className="aluno-edicao">
+          {isAdmin && <select value={a.cidadeId||''} onChange={e=>trocarCidade(a,e.target.value)}><option value="">Cidade</option>{CIDADES_ACRE.map(c=><option key={c.id} value={c.id}>{c.nome}</option>)}</select>}
+          <select value={a.turmaId||''} onChange={e=>atualizar(a,{turmaId:e.target.value})}>
+            <option value="">Trocar turma</option>{turmasCidade(a.cidadeId || professorCidadeId).map(t=><option key={t.id} value={t.id}>{t.nome}</option>)}
+          </select>
+          <select value={a.faixa||'branca'} onChange={e=>atualizar(a,{faixa:e.target.value})}>{FAIXAS.map(f=><option key={f.valor} value={f.valor}>{f.label}</option>)}</select>
+        </div>
+        <div className="aluno-acoes">
+          <button className="btn-desativar" onClick={()=>atualizar(a,{ativo:a.ativo===false})}>{a.ativo===false?'Ativar':'Desativar'}</button>
+          {isAdmin && <button className="btn-deletar" onClick={async()=>{if(window.confirm('Remover este aluno permanentemente?')){await deleteDoc(doc(db,'alunos',a.id));reload()}}}>🗑️</button>}
+        </div>
+      </div>)}
+    </div>
+  </div>
+}
 export default Alunos;

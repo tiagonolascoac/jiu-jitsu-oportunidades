@@ -133,7 +133,6 @@
 .history-row:last-child { border-bottom: 0; }
 .history-row strong { text-transform: capitalize; }
 .status-presente { color: #15803d; }
-.status-atrasado { color: #a16207; }
 .status-ausente { color: #b91c1c; }
 .capitalize { text-transform: capitalize; }
 
