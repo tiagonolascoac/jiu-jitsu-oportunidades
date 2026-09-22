@@ -121,34 +121,23 @@ function Auth() {
 
   return (
     <div className="auth-container">
-      <section className="auth-left">
-        <div className="auth-left-content">
-          <h1>🥋 Jiu-Jitsu Oportunidades</h1>
-          <p>
-            Presença, turmas e alunos organizados para fortalecer o projeto
-            gratuito de Jiu-Jitsu da comunidade.
-          </p>
-        </div>
-      </section>
-
-      <section className="auth-right">
+      <div className="auth-shell">
         <form className="auth-form" onSubmit={handleSubmit}>
-          <h2>{modo === 'login' ? 'Entrar' : 'Criar conta de aluno'}</h2>
+          <div className="auth-brand">
+            <div className="auth-brand-mark">🥋</div>
+            <h1>Jiu-Jitsu Oportunidades</h1>
+          </div>
+
+          <h2>{modo === 'login' ? 'Bem-vindo' : 'Criar conta de aluno'}</h2>
+          <p className="auth-subtitle">Projeto social de Jiu-Jitsu</p>
 
           {erro && <div className="auth-error">{erro}</div>}
           {sucesso && <div className="auth-success">{sucesso}</div>}
 
           {modo === 'cadastro' && (
             <>
-              <input
-                type="text"
-                placeholder="Nome completo"
-                value={nome}
-                onChange={(e) => setNome(e.target.value)}
-                required
-                disabled={carregando}
-              />
-
+              <input type="text" placeholder="Nome completo" value={nome}
+                onChange={(e) => setNome(e.target.value)} required disabled={carregando} />
               <select value={cidadeId} onChange={(e) => { setCidadeId(e.target.value); setTurmaId(''); }} disabled={carregando} required>
                 <option value="">Selecione sua cidade</option>
                 {CIDADES_ACRE.map(c => <option key={c.id} value={c.id}>{c.nome}</option>)}
@@ -160,42 +149,19 @@ function Auth() {
             </>
           )}
 
-          <input
-            type="email"
-            placeholder="E-mail"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            autoComplete="email"
-            disabled={carregando}
-          />
+          <input type="email" placeholder="E-mail" value={email}
+            onChange={(e) => setEmail(e.target.value)} required autoComplete="email" disabled={carregando} />
+          <input type="password" placeholder="Senha" value={senha}
+            onChange={(e) => setSenha(e.target.value)} required minLength={6}
+            autoComplete={modo === 'login' ? 'current-password' : 'new-password'} disabled={carregando} />
 
-          <input
-            type="password"
-            placeholder="Senha"
-            value={senha}
-            onChange={(e) => setSenha(e.target.value)}
-            required
-            minLength={6}
-            autoComplete={modo === 'login' ? 'current-password' : 'new-password'}
-            disabled={carregando}
-          />
-
-          <button type="submit" disabled={carregando}>
-            {carregando
-              ? 'Aguarde...'
-              : modo === 'login'
-                ? 'Entrar'
-                : 'Criar minha conta'}
+          <button className="auth-primary-button" type="submit" disabled={carregando}>
+            {carregando ? 'Aguarde...' : modo === 'login' ? 'Entrar' : 'Criar minha conta'}
           </button>
 
           {modo === 'login' && (
-            <button
-              type="button"
-              className="auth-secondary-button"
-              onClick={handleEsqueciSenha}
-              disabled={carregando}
-            >
+            <button type="button" className="auth-secondary-button"
+              onClick={handleEsqueciSenha} disabled={carregando}>
               Esqueci minha senha
             </button>
           )}
@@ -203,17 +169,14 @@ function Auth() {
           <p className="auth-toggle">
             {modo === 'login' ? 'Ainda não é aluno? ' : 'Já possui uma conta? '}
             <button type="button" className="auth-link-button" onClick={alternarModo}>
-              {modo === 'login' ? 'Cadastre-se' : 'Entrar'}
+              {modo === 'login' ? 'Criar conta' : 'Entrar'}
             </button>
           </p>
 
-          {modo === 'cadastro' && (
-            <p className="auth-professor-note">
-              Professores acessam o sistema por convite da administração.
-            </p>
-          )}
+          {modo === 'cadastro' && <p className="auth-professor-note">Professores acessam o sistema por convite da administração.</p>}
         </form>
-      </section>
+        <div className="auth-motto">DISCIPLINA <b>•</b> RESPEITO <b>•</b> EVOLUÇÃO</div>
+      </div>
     </div>
   );
 }
