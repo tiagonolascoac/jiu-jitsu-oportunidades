@@ -17,6 +17,8 @@ import Relatorio from './Relatorio';
 import Professores from './Professores';
 import ConfiguracaoPresenca from './ConfiguracaoPresenca';
 import CheckinAluno from './CheckinAluno';
+import AlunoAvatar from './AlunoAvatar';
+import TimerLuta from './TimerLuta';
 import { CIDADES_ACRE } from '../data/cidadesAcre';
 import '../styles/Dashboard.css';
 
@@ -187,6 +189,7 @@ function Dashboard({ user, userType }) {
       </div>
 
       <div className="quick-actions">
+        <TimerLuta />
         <h2>Acesso rápido</h2>
         <div className="quick-actions-grid">
           {isAdmin && <button onClick={() => trocarPagina('professores')}>👨‍🏫 Gerenciar professores</button>}
@@ -228,6 +231,11 @@ function Dashboard({ user, userType }) {
           </div>
         ) : (
           <>
+            <div className="student-mini-profile">
+              <AlunoAvatar aluno={aluno} size={96} />
+              <div><span className="eyebrow">Meu perfil</span><h2>{aluno.nome}</h2><p>{aluno.cidadeNome || 'Cidade não informada'} • Faixa {aluno.faixa || 'branca'}</p></div>
+            </div>
+            <TimerLuta />
             <CheckinAluno aluno={aluno} user={user} onSuccess={carregarDados} />
 
             <div className="student-profile-card">

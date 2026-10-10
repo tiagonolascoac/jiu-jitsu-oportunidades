@@ -268,3 +268,7 @@
   .presenca-tabs button { padding: 6px 3px; font-size: 10px; }
   .presenca-tabs button span { min-width: 17px; height: 17px; font-size: 9px; }
 }
+
+.presenca-item{grid-template-columns:auto minmax(90px,1fr) auto!important}.presenca-info{cursor:pointer}.faixa-label{display:block;text-transform:capitalize;color:#777;margin-top:3px}.presenca-confirmada-item{gap:10px}.presenca-confirmada-info{flex:1;cursor:pointer}
+.mini-perfil-overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:2000;display:flex;justify-content:flex-end}.mini-perfil{width:min(360px,90vw);height:100%;background:#fff;box-shadow:-12px 0 35px rgba(0,0,0,.16);padding:55px 28px 28px;box-sizing:border-box;display:flex;align-items:center;flex-direction:column;position:relative}.mini-perfil-fechar{position:absolute;right:16px;top:14px;border:0;background:#f3f3f3;width:36px;height:36px;border-radius:50%;font-size:24px;cursor:pointer}.mini-perfil h2{margin:10px 0 3px}.mini-faixa{text-transform:capitalize;color:#666}.mini-perfil-dados{width:100%;margin-top:28px;border-top:1px solid #eee}.mini-perfil-dados div{padding:14px 0;border-bottom:1px solid #eee;display:flex;flex-direction:column;gap:4px}.mini-perfil-dados span{font-size:12px;color:#777}.mini-perfil-dados strong{font-size:14px}
+@media(max-width:768px){.presenca-item{grid-template-columns:auto 1fr!important}.presenca-botoes{grid-column:2}.presenca-nota{grid-column:1/-1}.mini-perfil{width:88vw}.aluno-avatar{transform:scale(.9);transform-origin:left center}}

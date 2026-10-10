@@ -1,0 +1,4 @@
+.aluno-avatar{--avatar-size:64px;--faixa-cor:#f5f5f5;position:relative;width:calc(var(--avatar-size) + 14px);height:calc(var(--avatar-size) + 22px);border:0;background:transparent;padding:0;cursor:pointer;flex:0 0 auto}
+.aluno-avatar-foto{position:absolute;left:7px;top:2px;width:var(--avatar-size);height:var(--avatar-size);border-radius:50%;box-sizing:border-box;border:5px solid var(--faixa-cor);outline:1px solid rgba(0,0,0,.28);overflow:hidden;background:#e9e9e9;display:flex;align-items:center;justify-content:center;font-weight:800;color:#555;z-index:2}
+.aluno-avatar-foto img{width:100%;height:100%;object-fit:cover}.faixa-ponta{position:absolute;top:calc(var(--avatar-size) - 2px);width:28px;height:10px;background:var(--faixa-cor);border:1px solid rgba(0,0,0,.18);z-index:1}
+.faixa-ponta.esquerda{left:14px;transform:rotate(-38deg)}.faixa-ponta.direita{right:14px;transform:rotate(38deg)}

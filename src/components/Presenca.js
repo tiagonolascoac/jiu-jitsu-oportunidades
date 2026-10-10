@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { db } from '../firebase';
 import { addDoc, collection, getDocs, query, serverTimestamp, where } from 'firebase/firestore';
+import AlunoAvatar from './AlunoAvatar';
 import '../styles/Presenca.css';
 
 function Presenca({ alunos, turmas, reload, currentUserId }) {
@@ -12,6 +13,7 @@ function Presenca({ alunos, turmas, reload, currentUserId }) {
   const [carregandoGeo, setCarregandoGeo] = useState(false);
   const [buscaAluno, setBuscaAluno] = useState('');
   const [filtroLista, setFiltroLista] = useState('todos');
+  const [alunoSelecionado, setAlunoSelecionado] = useState(null);
 
   const alunosDaTurma = useMemo(() => {
     if (!turmaSelecionada) return [];
@@ -171,7 +173,8 @@ function Presenca({ alunos, turmas, reload, currentUserId }) {
                       const registro = registrosDaTurma.find(p => p.alunoId === aluno.id);
                       return (
                         <div key={aluno.id} className="presenca-confirmada-item">
-                          <div>
+                          <AlunoAvatar aluno={aluno} size={46} onClick={() => setAlunoSelecionado(aluno)} />
+                          <div className="presenca-confirmada-info" onClick={() => setAlunoSelecionado(aluno)}>
                             <strong>{aluno.nome}</strong>
                             <small>{registro?.metodo === 'geolocalizacao' ? 'Check-in por geolocalização' : 'Lançado pelo professor'}</small>
                           </div>
@@ -196,7 +199,10 @@ function Presenca({ alunos, turmas, reload, currentUserId }) {
                   <div className="presenca-items">
                     {alunosPendentes.map(aluno => (
                       <div key={aluno.id} className="presenca-item">
-                        <div className="presenca-info"><h4>{aluno.nome}</h4></div>
+                        <AlunoAvatar aluno={aluno} size={58} onClick={() => setAlunoSelecionado(aluno)} />
+                        <div className="presenca-info" onClick={() => setAlunoSelecionado(aluno)} role="button" tabIndex="0">
+                          <h4>{aluno.nome}</h4><small className="faixa-label">Faixa {aluno.faixa || 'branca'}</small>
+                        </div>
                         <div className="presenca-botoes">
                           <button className={`btn-status ${presencas[aluno.id] === 'presente' ? 'ativo' : ''}`} onClick={() => handleTogglePresenca(aluno.id, 'presente')}>✓ Presente</button>
                           <button className={`btn-status ${presencas[aluno.id] === 'ausente' ? 'ativo' : ''}`} onClick={() => handleTogglePresenca(aluno.id, 'ausente')}>✕ Ausente</button>
@@ -215,6 +221,21 @@ function Presenca({ alunos, turmas, reload, currentUserId }) {
           )}
         </div>
         </>
+      )}
+      {alunoSelecionado && (
+        <div className="mini-perfil-overlay" onClick={() => setAlunoSelecionado(null)}>
+          <aside className="mini-perfil" onClick={(e) => e.stopPropagation()}>
+            <button className="mini-perfil-fechar" onClick={() => setAlunoSelecionado(null)}>×</button>
+            <AlunoAvatar aluno={alunoSelecionado} size={112} />
+            <h2>{alunoSelecionado.nome}</h2>
+            <span className="mini-faixa">Faixa {alunoSelecionado.faixa || 'branca'}</span>
+            <div className="mini-perfil-dados">
+              <div><span>E-mail</span><strong>{alunoSelecionado.email || 'Não informado'}</strong></div>
+              <div><span>Cidade</span><strong>{alunoSelecionado.cidadeNome || 'Não informada'}</strong></div>
+              <div><span>Status</span><strong>{alunoSelecionado.ativo === false ? 'Inativo' : 'Ativo'}</strong></div>
+            </div>
+          </aside>
+        </div>
       )}
     </div>
   );

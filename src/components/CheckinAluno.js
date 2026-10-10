@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { addDoc, collection, doc, getDoc, getDocs, query, serverTimestamp, where } from 'firebase/firestore';
 import { db } from '../firebase';
 import '../styles/CheckinAluno.css';
@@ -23,6 +23,37 @@ function CheckinAluno({ aluno, user, onSuccess }) {
   const [estado, setEstado] = useState('idle');
   const [mensagem, setMensagem] = useState('');
   const [detalhes, setDetalhes] = useState(null);
+
+  useEffect(() => {
+    let ativo = true;
+    const verificarPresencaHoje = async () => {
+      if (!aluno?.id) return;
+      try {
+        const dataHoje = hojeLocal();
+        const existentes = await getDocs(query(collection(db, 'presencas'), where('alunoId', '==', aluno.id)));
+        const registroHoje = existentes.docs
+          .map(d => ({ id: d.id, ...d.data() }))
+          .find(p => p.data === dataHoje && p.status === 'presente');
+
+        if (ativo && registroHoje) {
+          setEstado('success');
+          setMensagem('Sua presença de hoje já está registrada.');
+          if (registroHoje.metodo === 'geolocalizacao') {
+            setDetalhes({
+              distancia: Number.isFinite(Number(registroHoje.distanciaMetros)) ? Number(registroHoje.distanciaMetros) : null,
+              raio: null,
+              precisao: Number.isFinite(Number(registroHoje.precisaoMetros)) ? Number(registroHoje.precisaoMetros) : null,
+              local: 'Presença confirmada'
+            });
+          }
+        }
+      } catch (e) {
+        console.error('Erro ao verificar presença de hoje:', e);
+      }
+    };
+    verificarPresencaHoje();
+    return () => { ativo = false; };
+  }, [aluno?.id]);
 
   const marcarPresenca = async () => {
     if (!aluno || aluno.ativo === false) return;
@@ -75,10 +106,22 @@ function CheckinAluno({ aluno, user, onSuccess }) {
   return (
     <div className={`checkin-card state-${estado}`}>
       <div className="checkin-icon">📍</div>
-      <div className="checkin-copy"><span>Presença de hoje</span><h2>Marcar minha presença</h2><p>Usaremos sua localização somente para verificar se você está no local da aula.</p></div>
+      <div className="checkin-copy">
+        <span>Presença de hoje</span>
+        <h2>{estado === 'success' ? '✓ Presença registrada' : 'Marcar minha presença'}</h2>
+        <p>{estado === 'success' ? 'Seu check-in de hoje já foi confirmado.' : 'Usaremos sua localização somente para verificar se você está no local da aula.'}</p>
+      </div>
       {mensagem && <div className="checkin-message">{mensagem}</div>}
-      {detalhes && <div className="checkin-details"><span>{detalhes.local}</span><strong>{detalhes.distancia} m do local</strong><small>Raio permitido: {detalhes.raio} m • Precisão do aparelho: ~{detalhes.precisao} m</small></div>}
-      <button onClick={marcarPresenca} disabled={estado === 'loading' || aluno?.ativo === false}>{estado === 'loading' ? 'Verificando localização...' : estado === 'success' ? '✓ Presença registrada' : '📍 Marcar minha presença'}</button>
+      {detalhes && <div className="checkin-details">
+        <span>{detalhes.local}</span>
+        {detalhes.distancia !== null && <strong>{detalhes.distancia} m do local</strong>}
+        {detalhes.raio !== null && <small>Raio permitido: {detalhes.raio} m • Precisão do aparelho: ~{detalhes.precisao} m</small>}
+      </div>}
+      {estado !== 'success' && (
+        <button onClick={marcarPresenca} disabled={estado === 'loading' || aluno?.ativo === false}>
+          {estado === 'loading' ? 'Verificando localização...' : '📍 Marcar minha presença'}
+        </button>
+      )}
     </div>
   );
 }
