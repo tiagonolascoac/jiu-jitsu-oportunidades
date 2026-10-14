@@ -17,7 +17,6 @@ import Relatorio from './Relatorio';
 import Professores from './Professores';
 import ConfiguracaoPresenca from './ConfiguracaoPresenca';
 import CheckinAluno from './CheckinAluno';
-import AlunoAvatar from './AlunoAvatar';
 import FotoPerfilAluno from './FotoPerfilAluno';
 import TimerLuta from './TimerLuta';
 import { CIDADES_ACRE } from '../data/cidadesAcre';
