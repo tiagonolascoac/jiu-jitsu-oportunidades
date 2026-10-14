@@ -11,7 +11,7 @@ const FAIXAS = [
 
 function Alunos({ alunos, turmas = [], reload, isAdmin=false, professorCidadeId='' }) {
   const cidadeInicial = isAdmin ? '' : professorCidadeId;
-  const [novoAluno,setNovoAluno]=useState({nome:'',email:'',cidadeId:cidadeInicial,turmaId:'',faixa:'branca'});
+  const [novoAluno,setNovoAluno]=useState({nome:'',email:'',cidadeId:cidadeInicial,turmaId:'',faixa:'branca',grau:0});
   const [mostrarForm,setMostrarForm]=useState(false);
   const [busca,setBusca]=useState('');
   const [filtroCidade,setFiltroCidade]=useState('');
@@ -33,7 +33,7 @@ function Alunos({ alunos, turmas = [], reload, isAdmin=false, professorCidadeId=
       ...novoAluno, cidadeNome:nomeCidade(novoAluno.cidadeId),
       turma:turma.tipo, professorId:auth.currentUser.uid, ativo:true, dataCriacao:new Date()
     });
-    setNovoAluno({nome:'',email:'',cidadeId:cidadeInicial,turmaId:'',faixa:'branca'});
+    setNovoAluno({nome:'',email:'',cidadeId:cidadeInicial,turmaId:'',faixa:'branca',grau:0});
     setMostrarForm(false); reload();
   };
 
@@ -63,6 +63,7 @@ function Alunos({ alunos, turmas = [], reload, isAdmin=false, professorCidadeId=
         <option value="">Selecione a turma</option>{turmasCidade(novoAluno.cidadeId).map(t=><option key={t.id} value={t.id}>{t.nome}</option>)}
       </select>
       <select value={novoAluno.faixa} onChange={e=>setNovoAluno({...novoAluno,faixa:e.target.value})}>{FAIXAS.map(f=><option key={f.valor} value={f.valor}>{f.label}</option>)}</select>
+      <select value={novoAluno.grau} onChange={e=>setNovoAluno({...novoAluno,grau:Number(e.target.value)})}>{[0,1,2,3,4].map(n=><option key={n} value={n}>{n} {n===1?'grau':'graus'}</option>)}</select>
       <button className="btn-submit">Adicionar</button>
     </form>}
 
@@ -80,7 +81,8 @@ function Alunos({ alunos, turmas = [], reload, isAdmin=false, professorCidadeId=
           <select value={a.turmaId||''} onChange={e=>atualizar(a,{turmaId:e.target.value})}>
             <option value="">Trocar turma</option>{turmasCidade(a.cidadeId || professorCidadeId).map(t=><option key={t.id} value={t.id}>{t.nome}</option>)}
           </select>
-          <select value={a.faixa||'branca'} onChange={e=>atualizar(a,{faixa:e.target.value})}>{FAIXAS.map(f=><option key={f.valor} value={f.valor}>{f.label}</option>)}</select>
+          <select aria-label="Faixa do aluno" value={a.faixa||'branca'} onChange={e=>atualizar(a,{faixa:e.target.value,grau:0})}>{FAIXAS.map(f=><option key={f.valor} value={f.valor}>{f.label}</option>)}</select>
+          <select aria-label="Grau do aluno" value={Number(a.grau)||0} onChange={e=>atualizar(a,{grau:Number(e.target.value)})}>{[0,1,2,3,4].map(n=><option key={n} value={n}>{n} {n===1?'grau':'graus'}</option>)}</select>
         </div>
         <div className="aluno-acoes">
           <button className="btn-desativar" onClick={()=>atualizar(a,{ativo:a.ativo===false})}>{a.ativo===false?'Ativar':'Desativar'}</button>

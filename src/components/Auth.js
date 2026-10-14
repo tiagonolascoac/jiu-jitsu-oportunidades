@@ -7,6 +7,7 @@ import {
 import { collection, doc, getDocs, setDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 import { CIDADES_ACRE, nomeCidade } from '../data/cidadesAcre';
+import logoMarca from '../assets/logo-oportunidades.png';
 import '../styles/Auth.css';
 
 const traduzirErro = (codigo) => {
@@ -30,6 +31,8 @@ function Auth() {
   const [senha, setSenha] = useState('');
   const [cidadeId, setCidadeId] = useState('');
   const [turmaId, setTurmaId] = useState('');
+  const [faixa, setFaixa] = useState('branca');
+  const [grau, setGrau] = useState(0);
   const [turmas, setTurmas] = useState([]);
   const [erro, setErro] = useState('');
   const [sucesso, setSucesso] = useState('');
@@ -75,6 +78,8 @@ function Auth() {
         cidadeId,
         cidadeNome: nomeCidade(cidadeId),
         turmaId,
+        faixa,
+        grau: Number(grau),
         turma: turmas.find(t => t.id === turmaId)?.tipo || '',
         ativo: true,
         criadoEm: serverTimestamp(),
@@ -89,7 +94,8 @@ function Auth() {
         cidadeNome: nomeCidade(cidadeId),
         turmaId,
         turma: turmas.find(t => t.id === turmaId)?.tipo || '',
-        faixa: 'branca',
+        faixa,
+        grau: Number(grau),
         ativo: true,
         criadoPeloProprioAluno: true,
         dataCriacao: serverTimestamp(),
@@ -122,9 +128,10 @@ function Auth() {
   return (
     <div className="auth-container">
       <div className="auth-shell">
+        <div className="auth-banner" aria-hidden="true" />
         <form className="auth-form" onSubmit={handleSubmit}>
           <div className="auth-brand">
-            <div className="auth-brand-mark">🥋</div>
+            <div className="auth-brand-mark"><img src={logoMarca} alt="Logo Jiu-Jitsu Oportunidades" /></div>
             <h1>Jiu-Jitsu Oportunidades</h1>
           </div>
 
@@ -141,6 +148,14 @@ function Auth() {
               <select value={cidadeId} onChange={(e) => { setCidadeId(e.target.value); setTurmaId(''); }} disabled={carregando} required>
                 <option value="">Selecione sua cidade</option>
                 {CIDADES_ACRE.map(c => <option key={c.id} value={c.id}>{c.nome}</option>)}
+              </select>
+              <label className="auth-field-label">Faixa atual</label>
+              <select value={faixa} onChange={(e) => setFaixa(e.target.value)} disabled={carregando}>
+                {['branca','azul','roxa','marrom','preta'].map(f => <option key={f} value={f}>{f.charAt(0).toUpperCase()+f.slice(1)}</option>)}
+              </select>
+              <label className="auth-field-label">Grau atual</label>
+              <select value={grau} onChange={(e) => setGrau(Number(e.target.value))} disabled={carregando}>
+                {[0,1,2,3,4].map(n => <option key={n} value={n}>{n} {n === 1 ? 'grau' : 'graus'}</option>)}
               </select>
               <select value={turmaId} onChange={(e) => setTurmaId(e.target.value)} disabled={carregando || !cidadeId} required>
                 <option value="">Selecione sua turma</option>

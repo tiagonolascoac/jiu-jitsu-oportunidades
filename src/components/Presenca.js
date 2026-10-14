@@ -201,7 +201,7 @@ function Presenca({ alunos, turmas, reload, currentUserId }) {
                       <div key={aluno.id} className="presenca-item">
                         <AlunoAvatar aluno={aluno} size={58} onClick={() => setAlunoSelecionado(aluno)} />
                         <div className="presenca-info" onClick={() => setAlunoSelecionado(aluno)} role="button" tabIndex="0">
-                          <h4>{aluno.nome}</h4><small className="faixa-label">Faixa {aluno.faixa || 'branca'}</small>
+                          <h4>{aluno.nome}</h4>
                         </div>
                         <div className="presenca-botoes">
                           <button className={`btn-status ${presencas[aluno.id] === 'presente' ? 'ativo' : ''}`} onClick={() => handleTogglePresenca(aluno.id, 'presente')}>✓ Presente</button>
@@ -228,7 +228,7 @@ function Presenca({ alunos, turmas, reload, currentUserId }) {
             <button className="mini-perfil-fechar" onClick={() => setAlunoSelecionado(null)}>×</button>
             <AlunoAvatar aluno={alunoSelecionado} size={112} />
             <h2>{alunoSelecionado.nome}</h2>
-            <span className="mini-faixa">Faixa {alunoSelecionado.faixa || 'branca'}</span>
+            <span className="mini-faixa">Faixa {alunoSelecionado.faixa || 'branca'}{Number(alunoSelecionado.grau) > 0 ? ` • ${alunoSelecionado.grau} ${Number(alunoSelecionado.grau) === 1 ? 'grau' : 'graus'}` : ''}</span>
             <div className="mini-perfil-dados">
               <div><span>E-mail</span><strong>{alunoSelecionado.email || 'Não informado'}</strong></div>
               <div><span>Cidade</span><strong>{alunoSelecionado.cidadeNome || 'Não informada'}</strong></div>

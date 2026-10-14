@@ -18,6 +18,7 @@ import Professores from './Professores';
 import ConfiguracaoPresenca from './ConfiguracaoPresenca';
 import CheckinAluno from './CheckinAluno';
 import AlunoAvatar from './AlunoAvatar';
+import FotoPerfilAluno from './FotoPerfilAluno';
 import TimerLuta from './TimerLuta';
 import { CIDADES_ACRE } from '../data/cidadesAcre';
 import '../styles/Dashboard.css';
@@ -188,8 +189,9 @@ function Dashboard({ user, userType }) {
         <div className="stat-card"><span>Presenças confirmadas</span><strong>{resumo.frequencia}%</strong></div>
       </div>
 
+      <div className="timer-staff-wrapper"><TimerLuta /></div>
+
       <div className="quick-actions">
-        <TimerLuta />
         <h2>Acesso rápido</h2>
         <div className="quick-actions-grid">
           {isAdmin && <button onClick={() => trocarPagina('professores')}>👨‍🏫 Gerenciar professores</button>}
@@ -232,15 +234,15 @@ function Dashboard({ user, userType }) {
         ) : (
           <>
             <div className="student-mini-profile">
-              <AlunoAvatar aluno={aluno} size={96} />
-              <div><span className="eyebrow">Meu perfil</span><h2>{aluno.nome}</h2><p>{aluno.cidadeNome || 'Cidade não informada'} • Faixa {aluno.faixa || 'branca'}</p></div>
+              <FotoPerfilAluno aluno={aluno} onAtualizado={carregarDados} />
+              <div><span className="eyebrow">Meu perfil</span><h2>{aluno.nome}</h2><p>{aluno.cidadeNome || 'Cidade não informada'} • Faixa {aluno.faixa || 'branca'}{Number(aluno.grau) > 0 ? ` • ${aluno.grau} ${Number(aluno.grau) === 1 ? 'grau' : 'graus'}` : ''}</p></div>
             </div>
             <TimerLuta />
             <CheckinAluno aluno={aluno} user={user} onSuccess={carregarDados} />
 
             <div className="student-profile-card">
               <div><span>Turma</span><strong>{aluno.turma === 'kids' ? 'Kids' : 'Adulto'}</strong></div>
-              <div><span>Faixa</span><strong className="capitalize">{aluno.faixa || 'Branca'}</strong></div>
+              <div><span>Faixa e grau</span><strong className="capitalize">{aluno.faixa || 'Branca'}{Number(aluno.grau) > 0 ? ` • ${aluno.grau} ${Number(aluno.grau) === 1 ? 'grau' : 'graus'}` : ''}</strong></div>
               <div><span>Status</span><strong>{aluno.ativo === false ? 'Inativo' : 'Ativo'}</strong></div>
             </div>
 

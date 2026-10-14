@@ -4,10 +4,13 @@
   background-size:cover;background-position:center;background-repeat:no-repeat;font-family:Arial,sans-serif
 }
 .auth-shell{width:min(100%,470px);display:flex;flex-direction:column;align-items:center}
-.auth-form{width:100%;box-sizing:border-box;background:rgba(255,255,255,.94);padding:34px 38px;border:1px solid rgba(0,0,0,.14);
-  border-radius:18px;box-shadow:0 14px 38px rgba(0,0,0,.18);backdrop-filter:blur(4px)}
-.auth-brand{text-align:center;margin-bottom:12px}.auth-brand-mark{width:72px;height:72px;margin:0 auto 8px;border:3px solid #d71920;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;font-size:38px;background:#fff}
+
+.auth-banner{width:100%;height:170px;background:url('../assets/login-oportunidades.png') center/cover no-repeat;border-radius:18px 18px 0 0;border:1px solid rgba(0,0,0,.12);border-bottom:0;box-shadow:0 8px 25px rgba(0,0,0,.08)}
+
+.auth-form{width:100%;box-sizing:border-box;background:rgba(255,255,255,.96);padding:34px 38px;border:1px solid rgba(0,0,0,.14);
+  border-top:0;border-radius:0 0 18px 18px;box-shadow:0 14px 38px rgba(0,0,0,.18);backdrop-filter:blur(4px)}
+.auth-brand{text-align:center;margin-bottom:12px}.auth-brand-mark{width:92px;height:92px;margin:-72px auto 10px;border:4px solid #d71920;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;background:#fff;box-shadow:0 8px 20px rgba(0,0,0,.12);overflow:hidden}.auth-brand-mark img{width:100%;height:100%;object-fit:cover}
 .auth-brand h1{margin:0;color:#1d1d1f;font-size:18px;font-weight:800}
 .auth-form h2{text-align:center;color:#111;margin:10px 0 3px;font-size:32px}.auth-subtitle{text-align:center;color:#666;margin:0 0 24px}
 .auth-form input,.auth-form select{width:100%;height:50px;padding:0 14px;margin-bottom:12px;border:1px solid #d5d5d5;border-radius:9px;font-size:15px;box-sizing:border-box;background:#fff}
@@ -25,10 +28,13 @@
 .auth-motto b{color:#d71920;margin:0 9px}
 @media(max-width:768px){
  .auth-container{padding:18px 14px;background-position:center}
- .auth-form{padding:25px 20px;border-radius:14px}
- .auth-brand-mark{width:58px;height:58px;font-size:30px}.auth-brand h1{font-size:16px}
+ .auth-banner{height:135px;border-radius:14px 14px 0 0}
+ .auth-form{padding:25px 20px;border-radius:0 0 14px 14px}
+ .auth-brand-mark{width:74px;height:74px;margin-top:-58px}.auth-brand h1{font-size:16px}
  .auth-form h2{font-size:27px}.auth-subtitle{font-size:14px;margin-bottom:18px}
  .auth-form input,.auth-form select{height:47px}.auth-primary-button{height:48px}
  .auth-motto{font-size:10px;letter-spacing:1.5px;margin-top:16px}.auth-motto b{margin:0 4px}
 }
 @media(max-height:720px) and (min-width:769px){.auth-container{padding:15px}.auth-form{padding:20px 30px}.auth-brand-mark{width:50px;height:50px;font-size:27px}.auth-form h2{font-size:26px}.auth-subtitle{margin-bottom:14px}.auth-form input,.auth-form select{height:43px;margin-bottom:9px}.auth-motto{margin-top:10px}}
+
+.auth-field-label{display:block;font-size:12px;font-weight:700;color:#333;margin:0 0 4px}
