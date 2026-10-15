@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import '../styles/Relatorio.css';
+import { presencasSemDuplicidade } from '../utils/presencaUtils';
 
 function Relatorio({ alunos, presencas }) {
   const [filtroTurma, setFiltroTurma] = useState('all');
@@ -15,7 +16,7 @@ function Relatorio({ alunos, presencas }) {
     .filter(a => !termoBusca || normalizar(a.nome).includes(termoBusca));
 
   const calcularFrequencia = (alunoId) => {
-    const pres = presencas.filter(p => p.alunoId === alunoId);
+    const pres = presencasSemDuplicidade(presencas.filter(p => p.alunoId === alunoId));
 
     if (pres.length === 0) return 0;
 
@@ -66,9 +67,9 @@ function Relatorio({ alunos, presencas }) {
 
           <tbody>
             {alunosFiltrados.map(aluno => {
-              const pres = presencas.filter(
+              const pres = presencasSemDuplicidade(presencas.filter(
                 p => p.alunoId === aluno.id
-              );
+              ));
 
               const presentes = pres.filter(
                 p => p.status === 'presente'

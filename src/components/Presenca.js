@@ -1,58 +1,70 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { db } from '../firebase';
-import { addDoc, collection, getDocs, query, serverTimestamp, where } from 'firebase/firestore';
+import { collection, doc, getDocsFromServer, onSnapshot, query, serverTimestamp, where, writeBatch } from 'firebase/firestore';
+import { dataHojeAcre } from '../utils/presencaUtils';
+import { registrarPresencaUnica } from '../utils/registrarPresenca';
 import AlunoAvatar from './AlunoAvatar';
 import '../styles/Presenca.css';
 
+// O nome completo continua preservado no banco e no mini perfil.
+function nomeParaChamada(nome) {
+  const partes = String(nome || '').trim().split(/\s+/).filter(Boolean);
+  return partes.length > 2 ? `${partes[0]} ${partes[partes.length - 1]}` : partes.join(' ');
+}
+
 function Presenca({ alunos, turmas, reload, currentUserId }) {
   const [presencas, setPresencas] = useState({});
-  const [dataSelecionada, setDataSelecionada] = useState(new Date().toISOString().split('T')[0]);
+  const [dataSelecionada, setDataSelecionada] = useState(dataHojeAcre());
   const [turmaSelecionada, setTurmaSelecionada] = useState('');
   const [notas, setNotas] = useState({});
   const [presencasRegistradas, setPresencasRegistradas] = useState([]);
   const [carregandoGeo, setCarregandoGeo] = useState(false);
+  const [erroCarregamento, setErroCarregamento] = useState('');
+  const [salvando, setSalvando] = useState(false);
   const [buscaAluno, setBuscaAluno] = useState('');
   const [filtroLista, setFiltroLista] = useState('todos');
   const [alunoSelecionado, setAlunoSelecionado] = useState(null);
+  const [removendoAlunoId, setRemovendoAlunoId] = useState(null);
 
   const alunosDaTurma = useMemo(() => {
     if (!turmaSelecionada) return [];
     const turma = turmas.find(t => t.id === turmaSelecionada);
-    return alunos.filter(a => a.turma === turma?.tipo);
+    if (!turma) return [];
+    // Respeita a turma exata; alunos antigos, sem turmaId, ainda são suportados.
+    return alunos.filter(a =>
+      a.turmaId === turma.id ||
+      (!a.turmaId && a.turma === turma.tipo &&
+        (!a.cidadeId || !turma.cidadeId || a.cidadeId === turma.cidadeId))
+    );
   }, [alunos, turmas, turmaSelecionada]);
 
   useEffect(() => {
-    let ativo = true;
+    if (!dataSelecionada) return undefined;
+    setCarregandoGeo(true);
+    setErroCarregamento('');
+    setPresencasRegistradas([]);
 
-    const carregarPresencasRegistradas = async () => {
-      if (!dataSelecionada) return;
-      setCarregandoGeo(true);
-      try {
-        const snapshot = await getDocs(
-          query(collection(db, 'presencas'), where('data', '==', dataSelecionada))
-        );
-        if (!ativo) return;
-        setPresencasRegistradas(
-          snapshot.docs.map(item => ({ id: item.id, ...item.data() }))
-        );
-      } catch (error) {
-        console.error('Erro ao carregar presenças por geolocalização:', error);
-        if (ativo) setPresencasRegistradas([]);
-      } finally {
-        if (ativo) setCarregandoGeo(false);
+    // Atualiza a lista do professor quando o aluno faz check-in, sem F5.
+    const cancelar = onSnapshot(
+      query(collection(db, 'presencas'), where('data', '==', dataSelecionada)),
+      (snapshot) => {
+        setPresencasRegistradas(snapshot.docs.map(item => ({ id: item.id, ...item.data() })));
+        setCarregandoGeo(false);
+        setErroCarregamento('');
+      },
+      (error) => {
+        console.error('Erro ao acompanhar presenças:', error);
+        setPresencasRegistradas([]);
+        setCarregandoGeo(false);
+        setErroCarregamento('Não foi possível ler as presenças. Não lance novas presenças até corrigir a permissão do Firestore.');
       }
-    };
-
-    carregarPresencasRegistradas();
-    return () => { ativo = false; };
+    );
+    return () => cancelar();
   }, [dataSelecionada]);
 
-  const registrosDaTurma = useMemo(
-    () => presencasRegistradas.filter(item =>
-      !item.turmaSelecionada || item.turmaSelecionada === turmaSelecionada
-    ),
-    [presencasRegistradas, turmaSelecionada]
-  );
+  // O registro vale uma vez por aluno/dia mesmo se foi criado pelo check-in
+  // sem turmaSelecionada (versões antigas) ou por outra interface.
+  const registrosDaTurma = presencasRegistradas;
 
   const idsJaRegistrados = useMemo(
     () => new Set(registrosDaTurma.map(item => item.alunoId)),
@@ -77,6 +89,60 @@ function Presenca({ alunos, turmas, reload, currentUserId }) {
   const totalConfirmados = alunosDaTurma.filter(aluno => idsJaRegistrados.has(aluno.id)).length;
   const totalPendentes = alunosDaTurma.length - totalConfirmados;
 
+  const handleRemoverPresenca = async (aluno) => {
+    if (!turmaSelecionada || !dataSelecionada || removendoAlunoId || salvando || carregandoGeo || erroCarregamento) return;
+
+    setRemovendoAlunoId(aluno.id);
+    try {
+      // Confere a versão mais recente no servidor para incluir inclusive
+      // documentos legados com IDs aleatórios criados antes da correção.
+      const snapshot = await getDocsFromServer(
+        query(collection(db, 'presencas'), where('data', '==', dataSelecionada))
+      );
+      const registrosAluno = snapshot.docs.filter(item => item.data().alunoId === aluno.id);
+
+      if (!registrosAluno.length) {
+        alert('Não há mais lançamentos deste aluno nessa data. A lista será atualizada automaticamente.');
+        return;
+      }
+
+      const quantidade = registrosAluno.length;
+      const mensagem = `Remover ${quantidade} ${quantidade === 1 ? 'registro' : 'registros'} de ${aluno.nome} em ${dataSelecionada.split('-').reverse().join('/')}?\n\n` +
+        (quantidade > 1 ? 'Há registros duplicados. Todos os lançamentos dessa data serão removidos.\n\n' : '') +
+        'O aluno voltará para Pendentes e poderá registrar presença novamente. Esta ação não pode ser desfeita.';
+      if (!window.confirm(mensagem)) return;
+
+      // Limite conservador: uma única operação atômica evita exclusão parcial.
+      if (registrosAluno.length > 450) throw new Error('LIMITE_REGISTROS');
+      const lote = writeBatch(db);
+      registrosAluno.forEach(item => lote.delete(doc(db, 'presencas', item.id)));
+      await lote.commit();
+
+      setPresencas(anterior => {
+        const novo = { ...anterior };
+        delete novo[aluno.id];
+        return novo;
+      });
+      setNotas(anterior => {
+        const novo = { ...anterior };
+        delete novo[aluno.id];
+        return novo;
+      });
+      // onSnapshot atualiza a aba Registrados/Pendentes imediatamente.
+    } catch (error) {
+      console.error('Erro ao remover presença:', error);
+      if (error.code === 'permission-denied') {
+        alert('O Firestore não permitiu remover essa presença. É necessário autorizar a exclusão para professores responsáveis e administradores nas regras do banco.');
+      } else if (error.message === 'LIMITE_REGISTROS') {
+        alert('Há registros demais para excluir em uma só operação. Solicite uma limpeza administrativa.');
+      } else {
+        alert('Não foi possível remover a presença. Confira sua conexão e tente novamente.');
+      }
+    } finally {
+      setRemovendoAlunoId(null);
+    }
+  };
+
   const handleTogglePresenca = (alunoId, status) => {
     setPresencas(prev => ({
       ...prev,
@@ -89,35 +155,57 @@ function Presenca({ alunos, turmas, reload, currentUserId }) {
       alert('Selecione uma turma');
       return;
     }
+    if (carregandoGeo || erroCarregamento || salvando) {
+      alert(erroCarregamento || 'Aguarde o carregamento das presenças.');
+      return;
+    }
+    const selecionados = alunosDaTurma.filter((aluno) => Boolean(presencas[aluno.id]));
+    if (selecionados.length === 0) {
+      alert('Marque pelo menos uma presença ou ausência antes de salvar.');
+      return;
+    }
 
+    setSalvando(true);
     try {
-      for (const alunoId in presencas) {
-        if (presencas[alunoId] && !idsJaRegistrados.has(alunoId)) {
-          await addDoc(collection(db, 'presencas'), {
-            alunoId,
-            turmaSelecionada,
-            data: dataSelecionada,
-            status: presencas[alunoId],
-            nota: notas[alunoId] || '',
-            dataCriacao: serverTimestamp(),
-            metodo: 'manual',
-            registradoPor: currentUserId || '',
-          });
-        }
-      }
-      // Recarrega os registros da data para que os alunos desapareçam imediatamente
-      // e continuem fora da lista mesmo após atualizar a página.
-      const snapshotAtualizado = await getDocs(
+      // Verificar novamente no servidor: check-in pode ter acontecido desde a
+      // última atualização da interface do professor.
+      const snapshotAtual = await getDocsFromServer(
         query(collection(db, 'presencas'), where('data', '==', dataSelecionada))
       );
-      setPresencasRegistradas(snapshotAtualizado.docs.map(item => ({ id: item.id, ...item.data() })));
-      alert('Presença registrada com sucesso!');
+      const jaRegistrados = new Set(snapshotAtual.docs.map(item => item.data().alunoId));
+      const turma = turmas.find(item => item.id === turmaSelecionada);
+      let criados = 0;
+      let ignorados = 0;
+
+      for (const aluno of selecionados) {
+        if (jaRegistrados.has(aluno.id)) {
+          ignorados += 1;
+          continue;
+        }
+        const resultado = await registrarPresencaUnica({
+          alunoId: aluno.id,
+          data: dataSelecionada,
+          turmaSelecionada,
+          turma: turma?.tipo || aluno.turma || '',
+          status: presencas[aluno.id],
+          nota: notas[aluno.id] || '',
+          dataCriacao: serverTimestamp(),
+          metodo: 'manual',
+          registradoPor: currentUserId || '',
+        });
+        if (resultado.criado) criados += 1;
+        else ignorados += 1;
+        jaRegistrados.add(aluno.id);
+      }
       setPresencas({});
       setNotas({});
       if (reload) await reload();
+      alert(`${criados} registro(s) salvo(s).${ignorados ? ` ${ignorados} já existia(m) e não foram duplicados.` : ''}`);
     } catch (error) {
       console.error('Erro ao registrar presença:', error);
-      alert('Erro ao registrar presença');
+      alert('Não foi possível concluir a chamada. Confira sua conexão e as regras do Firestore. Registros já gravados não serão duplicados ao tentar novamente.');
+    } finally {
+      setSalvando(false);
     }
   };
 
@@ -154,12 +242,14 @@ function Presenca({ alunos, turmas, reload, currentUserId }) {
             <div className="presenca-tabs">
               <button className={filtroLista === 'todos' ? 'ativo' : ''} onClick={() => setFiltroLista('todos')}>Todos <span>{alunosDaTurma.length}</span></button>
               <button className={filtroLista === 'pendentes' ? 'ativo' : ''} onClick={() => setFiltroLista('pendentes')}>Pendentes <span>{totalPendentes}</span></button>
-              <button className={filtroLista === 'presentes' ? 'ativo' : ''} onClick={() => setFiltroLista('presentes')}>Presentes <span>{totalConfirmados}</span></button>
+              <button className={filtroLista === 'presentes' ? 'ativo' : ''} onClick={() => setFiltroLista('presentes')}>Registrados <span>{totalConfirmados}</span></button>
             </div>
           </div>
         <div className="presenca-lista">
           {carregandoGeo ? (
             <p className="vazio">Verificando presenças já marcadas...</p>
+          ) : erroCarregamento ? (
+            <p className="vazio" role="alert">{erroCarregamento}</p>
           ) : (
             <>
               {filtroLista !== 'pendentes' && alunosJaRegistrados.length > 0 && (
@@ -175,7 +265,7 @@ function Presenca({ alunos, turmas, reload, currentUserId }) {
                         <div key={aluno.id} className="presenca-confirmada-item">
                           <AlunoAvatar aluno={aluno} size={46} onClick={() => setAlunoSelecionado(aluno)} />
                           <div className="presenca-confirmada-info" onClick={() => setAlunoSelecionado(aluno)}>
-                            <strong>{aluno.nome}</strong>
+                            <strong title={aluno.nome}>{nomeParaChamada(aluno.nome)}</strong>
                             <small>{registro?.metodo === 'geolocalizacao' ? 'Check-in por geolocalização' : 'Lançado pelo professor'}</small>
                           </div>
                           <div className="presenca-confirmada-status">
@@ -184,6 +274,15 @@ function Presenca({ alunos, turmas, reload, currentUserId }) {
                               <small>{registro.distanciaMetros} m do local</small>
                             )}
                           </div>
+                          <button
+                            type="button"
+                            className="presenca-botao-remover"
+                            onClick={() => handleRemoverPresenca(aluno)}
+                            disabled={Boolean(removendoAlunoId) || salvando || carregandoGeo || Boolean(erroCarregamento)}
+                            aria-label={`Remover presença de ${aluno.nome} em ${dataSelecionada}`}
+                          >
+                            {removendoAlunoId === aluno.id ? 'Removendo...' : 'Remover presença'}
+                          </button>
                         </div>
                       );
                     })}
@@ -201,7 +300,7 @@ function Presenca({ alunos, turmas, reload, currentUserId }) {
                       <div key={aluno.id} className="presenca-item">
                         <AlunoAvatar aluno={aluno} size={58} onClick={() => setAlunoSelecionado(aluno)} />
                         <div className="presenca-info" onClick={() => setAlunoSelecionado(aluno)} role="button" tabIndex="0">
-                          <h4>{aluno.nome}</h4>
+                          <h4 title={aluno.nome}>{nomeParaChamada(aluno.nome)}</h4>
                         </div>
                         <div className="presenca-botoes">
                           <button className={`btn-status ${presencas[aluno.id] === 'presente' ? 'ativo' : ''}`} onClick={() => handleTogglePresenca(aluno.id, 'presente')}>✓ Presente</button>
@@ -211,7 +310,7 @@ function Presenca({ alunos, turmas, reload, currentUserId }) {
                       </div>
                     ))}
                   </div>
-                  <button className="btn-salvar" onClick={handleRegistrarPresencas}>💾 Registrar Presença</button>
+                  <button className="btn-salvar" onClick={handleRegistrarPresencas} disabled={salvando || carregandoGeo || Boolean(erroCarregamento)}>{salvando ? 'Salvando...' : '💾 Registrar Presença'}</button>
                 </>
               ))}
               {buscaAluno && alunosJaRegistrados.length === 0 && alunosPendentes.length === 0 && (

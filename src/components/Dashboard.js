@@ -20,6 +20,7 @@ import CheckinAluno from './CheckinAluno';
 import FotoPerfilAluno from './FotoPerfilAluno';
 import TimerLuta from './TimerLuta';
 import { CIDADES_ACRE } from '../data/cidadesAcre';
+import { dataHojeAcre, diaSeguinte, presencasSemDuplicidade } from '../utils/presencaUtils';
 import '../styles/Dashboard.css';
 
 function Dashboard({ user, userType }) {
@@ -147,20 +148,53 @@ function Dashboard({ user, userType }) {
     }
   }, [carregarDados, isAdmin]);
 
+  const presencasUnicas = useMemo(() => presencasSemDuplicidade(presencas), [presencas]);
+
+  const auditoriaHoje = useMemo(() => {
+    const hoje = dataHojeAcre();
+    const amanha = diaSeguinte(hoje);
+    const grupos = new Map();
+    presencas.filter((registro) => registro.data === hoje || registro.data === amanha).forEach((registro) => {
+      if (!registro.alunoId) return;
+      const registros = grupos.get(registro.alunoId) || [];
+      registros.push(registro);
+      grupos.set(registro.alunoId, registros);
+    });
+    return Array.from(grupos.entries())
+      .filter(([, registros]) => registros.length > 1)
+      .map(([alunoId, registros]) => ({
+        alunoId,
+        nome: alunos.find((a) => a.id === alunoId)?.nome || 'Aluno não encontrado',
+        registros,
+        mesmaData: new Set(registros.map((registro) => registro.data)).size === 1,
+      }));
+  }, [alunos, presencas]);
+
+  const indicadoresHoje = useMemo(() => {
+    const hoje = dataHojeAcre();
+    const registrosHoje = presencas.filter((registro) => registro.data === hoje);
+    return {
+      total: registrosHoje.length,
+      unicos: new Set(registrosHoje.map((registro) => registro.alunoId).filter(Boolean)).size,
+      geolocalizacao: registrosHoje.filter((registro) => registro.metodo === 'geolocalizacao').length,
+      manuais: registrosHoje.filter((registro) => registro.metodo === 'manual').length,
+    };
+  }, [presencas]);
+
   const resumo = useMemo(() => {
     const ativos = alunos.filter((aluno) => aluno.ativo !== false).length;
-    const presentes = presencas.filter((item) => item.status === 'presente').length;
-    const frequencia = presencas.length
-      ? Math.round((presentes / presencas.length) * 100)
+    const presentes = presencasUnicas.filter((item) => item.status === 'presente').length;
+    const frequencia = presencasUnicas.length
+      ? Math.round((presentes / presencasUnicas.length) * 100)
       : 0;
 
     return {
       alunosAtivos: ativos,
       turmas: turmas.length,
-      registros: presencas.length,
+      registros: presencasUnicas.length,
       frequencia,
     };
-  }, [alunos, turmas, presencas]);
+  }, [alunos, turmas, presencasUnicas]);
 
   const trocarPagina = (novaPagina) => {
     setPagina(novaPagina);
@@ -188,6 +222,33 @@ function Dashboard({ user, userType }) {
         <div className="stat-card"><span>Presenças confirmadas</span><strong>{resumo.frequencia}%</strong></div>
       </div>
 
+      {isAdmin && (
+        <div className="auditoria-presencas-card">
+          <h2>Conferência dos lançamentos</h2>
+          <p>Verificação de hoje ({dataHojeAcre()}) e do dia seguinte, para localizar registros duplicados ou com data UTC incorreta.</p>
+          <div className="auditoria-resumo">
+            <span><strong>{indicadoresHoje.total}</strong> registros hoje</span>
+            <span><strong>{indicadoresHoje.unicos}</strong> alunos únicos</span>
+            <span><strong>{indicadoresHoje.geolocalizacao}</strong> por GPS</span>
+            <span><strong>{indicadoresHoje.manuais}</strong> manuais</span>
+          </div>
+          {auditoriaHoje.length === 0 ? (
+            <p className="auditoria-ok">Nenhum aluno com múltiplos registros nessa janela.</p>
+          ) : (
+            <div className="auditoria-presencas-lista">
+              {auditoriaHoje.map(({ alunoId, nome, registros, mesmaData }) => (
+                <div key={alunoId} className="auditoria-presencas-item">
+                  <strong>{nome}</strong>
+                  <span>{registros.length} registros • {mesmaData ? 'Mesma data (duplicidade)' : 'Datas consecutivas (verificar fuso horário)'}</span>
+                  <small>{registros.map((r) => `${r.data}: ${r.status || '?'} (${r.metodo || 'sem método'}) [${r.id}]`).join(' | ')}</small>
+                </div>
+              ))}
+            </div>
+          )}
+          <small>Não exclui nem modifica registros. Confira os horários de criação no Firestore antes de corrigir históricos.</small>
+        </div>
+      )}
+
       <div className="timer-staff-wrapper"><TimerLuta /></div>
 
       <div className="quick-actions">
@@ -206,10 +267,11 @@ function Dashboard({ user, userType }) {
 
   const renderAluno = () => {
     const aluno = alunos[0];
-    const presentes = presencas.filter((item) => item.status === 'presente').length;
-    const ausentes = presencas.filter((item) => item.status === 'ausente' || item.status === 'atrasado').length;
-    const frequencia = presencas.length
-      ? Math.round((presentes / presencas.length) * 100)
+    const registrosAluno = presencasSemDuplicidade(presencas);
+    const presentes = registrosAluno.filter((item) => item.status === 'presente').length;
+    const ausentes = registrosAluno.filter((item) => item.status === 'ausente' || item.status === 'atrasado').length;
+    const frequencia = registrosAluno.length
+      ? Math.round((presentes / registrosAluno.length) * 100)
       : 0;
 
     return (
@@ -253,11 +315,11 @@ function Dashboard({ user, userType }) {
 
             <div className="history-card">
               <h2>Últimos registros</h2>
-              {presencas.length === 0 ? (
+              {registrosAluno.length === 0 ? (
                 <p>Nenhuma presença registrada ainda.</p>
               ) : (
                 <div className="history-list">
-                  {[...presencas]
+                  {[...registrosAluno]
                     .sort((a, b) => String(b.data || '').localeCompare(String(a.data || '')))
                     .slice(0, 10)
                     .map((item) => (
