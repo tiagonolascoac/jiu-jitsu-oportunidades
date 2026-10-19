@@ -183,3 +183,37 @@
 }
 
 .alunos-filtros{display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px;margin:16px 0}.alunos-filtros input,.alunos-filtros select,.aluno-edicao select{padding:10px;border:1px solid #ddd;border-radius:8px}.aluno-gerencia-card{align-items:center}.aluno-edicao{display:flex;gap:8px;flex-wrap:wrap}.aluno-info small{display:block;margin-top:4px;color:#666}@media(max-width:768px){.alunos-filtros{grid-template-columns:1fr}.aluno-gerencia-card{display:block}.aluno-edicao{margin:10px 0}.aluno-edicao select{width:100%}}
+
+/* Foto no cadastro interno (professor/admin) */
+.aluno-foto-cadastro { border:1px solid #dadfe5; border-radius:12px; padding:16px; margin:2px 0 16px; background:#fff; }
+.aluno-foto-cabecalho { display:flex; flex-direction:column; gap:4px; margin-bottom:14px; }
+.aluno-foto-cabecalho strong { font-size:15px; color:#262626; }
+.aluno-foto-cabecalho strong span { font-size:12px; font-weight:400; color:#777; }
+.aluno-foto-cabecalho small, .aluno-foto-controles small { color:#666; line-height:1.4; }
+.aluno-foto-conteudo { display:flex; align-items:center; gap:18px; }
+.aluno-foto-previa { width:106px; height:106px; border-radius:50%; flex:0 0 106px; overflow:hidden; background:#f1f1f1; border:3px solid #d71920; display:grid; place-items:center; }
+.aluno-foto-previa img { width:100%;height:100%;object-fit:cover; }
+.aluno-foto-previa span { font-size:43px; }
+.aluno-foto-controles { min-width:0; display:flex;flex-direction:column;gap:9px; }
+.aluno-foto-acoes { display:flex; flex-wrap:wrap; gap:8px; }
+.aluno-foto-acoes button { border:0; border-radius:9px; background:#171717; color:#fff; padding:11px 13px; cursor:pointer; font-weight:700; font-size:13px; }
+.aluno-foto-acoes button:nth-child(2) { background:#167e3a; }
+.aluno-foto-acoes button:disabled,.aluno-foto-remover:disabled { opacity:.6;cursor:wait; }
+.aluno-foto-remover { background:transparent;border:0;align-self:flex-start;color:#b91c1c;font-weight:700;cursor:pointer;padding:3px 0; }
+.aluno-foto-input-oculto { position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;opacity:0!important;pointer-events:none!important;padding:0!important;margin:0!important; }
+.aluno-foto-consentimento { display:flex; align-items:flex-start; gap:9px; margin-top:14px; font-size:13px; line-height:1.4; cursor:pointer; color:#333; }
+.form-aluno .aluno-foto-consentimento input[type="checkbox"] { width:18px; height:18px; margin:0; flex:0 0 auto; accent-color:#167e3a; }
+.aluno-foto-status { color:#267e46;font-size:13px;margin:10px 0; }
+.aluno-foto-erro { margin:0 0 15px;padding:12px;border-radius:8px;background:#fee2e2;color:#9b1c1c;font-size:13px;line-height:1.5; }
+.aluno-foto-sucesso { margin-bottom:14px;padding:12px;border-radius:8px;background:#dcfce7;color:#166534;font-size:14px;font-weight:700; }
+.aluno-foto-recuperacao { border:1px solid #f6ba77; background:#fffaf0; padding:15px; border-radius:10px; }
+.aluno-foto-recuperacao p { color:#555; font-size:14px;line-height:1.5; }
+@media(max-width:540px) {
+  .aluno-foto-cadastro { padding:12px; }
+  .aluno-foto-conteudo { flex-direction:column; align-items:flex-start;gap:13px; }
+  .aluno-foto-acoes button { flex:1 1 130px; }
+  .aluno-foto-previa { width:92px;height:92px;flex-basis:92px; }
+  .aluno-foto-controles { width:100%; }
+}
+
+.aluno-gerencia-identificacao{display:flex;align-items:center;gap:15px;min-width:0}.aluno-gerencia-identificacao .aluno-info{min-width:0;overflow-wrap:anywhere}@media(max-width:768px){.aluno-gerencia-identificacao{margin-bottom:12px}}

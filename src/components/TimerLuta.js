@@ -64,6 +64,53 @@ export default function TimerLuta() {
     return () => window.clearInterval(id);
   }, [rodando]);
 
+  // Mantém a tela ativa enquanto a luta estiver rodando.
+  // O navegador libera automaticamente o Wake Lock quando a aba sai do primeiro plano;
+  // por isso solicitamos novamente ao voltar para o cronômetro.
+  useEffect(() => {
+    if (!rodando) return undefined;
+
+    let cancelado = false;
+    let solicitando = false;
+    let wakeLock = null;
+
+    const manterTelaAcesa = async () => {
+      if (!('wakeLock' in navigator) || document.visibilityState !== 'visible') return;
+      if (solicitando || (wakeLock && !wakeLock.released)) return;
+
+      solicitando = true;
+      try {
+        const bloqueio = await navigator.wakeLock.request('screen');
+        if (cancelado || document.visibilityState !== 'visible') {
+          await bloqueio.release();
+          return;
+        }
+        wakeLock = bloqueio;
+      } catch (erro) {
+        // Alguns navegadores/dispositivos recusam a solicitação, por exemplo
+        // no modo de economia de energia. O timer continua funcionando normalmente.
+        if (!cancelado) console.warn('Não foi possível manter a tela acesa:', erro);
+      } finally {
+        solicitando = false;
+      }
+    };
+
+    const aoVoltarParaTela = () => {
+      if (document.visibilityState === 'visible') manterTelaAcesa();
+    };
+
+    manterTelaAcesa();
+    document.addEventListener('visibilitychange', aoVoltarParaTela);
+
+    return () => {
+      cancelado = true;
+      document.removeEventListener('visibilitychange', aoVoltarParaTela);
+      if (wakeLock && !wakeLock.released) {
+        wakeLock.release().catch(() => {});
+      }
+    };
+  }, [rodando]);
+
   useEffect(() => {
     if (!aberto) return undefined;
     const anterior = document.body.style.overflow;
