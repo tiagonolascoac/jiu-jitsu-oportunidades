@@ -217,3 +217,74 @@
 }
 
 .aluno-gerencia-identificacao{display:flex;align-items:center;gap:15px;min-width:0}.aluno-gerencia-identificacao .aluno-info{min-width:0;overflow-wrap:anywhere}@media(max-width:768px){.aluno-gerencia-identificacao{margin-bottom:12px}}
+
+/* Lista compacta: toque na foto ou no nome para abrir o perfil lateral. */
+.aluno-gerencia-card { gap:16px; }
+.aluno-gerencia-identificacao { flex:1 1 270px; min-width:0; }
+.aluno-gerencia-identificacao .aluno-avatar-interativo { cursor:pointer; }
+.aluno-gerencia-identificacao .aluno-info { min-width:0; }
+.aluno-nome-abrir { border:0; padding:0; margin:0 0 4px; background:transparent; color:#222; font:inherit; font-size:16px; font-weight:800; line-height:1.25; cursor:pointer; text-align:left; max-width:100%; overflow-wrap:anywhere; }
+.aluno-nome-abrir:hover { color:#ba111b; text-decoration:underline; }
+.aluno-nome-abrir:focus-visible,.aluno-botao-perfil:focus-visible { outline:3px solid #dc2626; outline-offset:3px; }
+.aluno-acoes-lista { flex-wrap:wrap; align-items:center; justify-content:flex-end; }
+.aluno-botao-perfil { padding:10px 14px; border-radius:10px; border:1px solid #cbd5e1; background:#fafafa; color:#202020; font-size:13px; font-weight:800; cursor:pointer; }
+.aluno-botao-perfil:hover { border-color:#d71920; color:#b91c1c; background:#fff4f4; }
+.aluno-botao-perfil span { font-size:21px; line-height:0; margin-left:5px; vertical-align:-1px; }
+.aluno-acoes-lista .btn-desativar,.aluno-acoes-lista .btn-deletar { padding:10px 12px; border-radius:10px; border:1px solid #e5e7eb; font-size:13px; font-weight:700; }
+.aluno-acoes-lista .btn-desativar { color:#374151; background:#fff; }
+.aluno-acoes-lista .btn-deletar { font-size:16px; }
+
+/* Mesmo comportamento do mini perfil da tela de presença, com edição no local. */
+.alunos-perfil-overlay { position:fixed; inset:0; z-index:2300; background:rgba(0,0,0,.48); display:flex; justify-content:flex-end; }
+.alunos-perfil-lateral { position:relative; height:100%; height:100dvh; width:min(450px,100%); max-width:100%; overflow-y:auto; overscroll-behavior:contain; box-sizing:border-box; padding:62px 28px max(32px,env(safe-area-inset-bottom)); background:#fff; box-shadow:-14px 0 45px rgba(0,0,0,.22); color:#1f2937; }
+.alunos-perfil-fechar { position:absolute; top:16px; right:19px; width:38px; height:38px; border:0; border-radius:50%; background:#f3f4f6; color:#111; font-size:26px; line-height:1; cursor:pointer; }
+.alunos-perfil-fechar:hover { background:#fee2e2; }
+.alunos-perfil-fechar:disabled { cursor:wait; opacity:.5; }
+.alunos-perfil-cabecalho { display:flex; flex-direction:column; align-items:center; text-align:center; gap:7px; padding-bottom:21px; }
+.alunos-perfil-cabecalho h2 { margin:7px 0 0; font-size:23px; line-height:1.25; overflow-wrap:anywhere; }
+.alunos-perfil-graduacao { text-transform:capitalize; color:#6b7280; font-size:13px; }
+.alunos-perfil-status { font-size:11px; padding:5px 12px; font-weight:800; border-radius:999px; background:#dcfce7; color:#166534; }
+.alunos-perfil-status.inativo { background:#fee2e2; color:#991b1b; }
+.alunos-perfil-dados { border-top:1px solid #e5e7eb; margin:4px 0 24px; }
+.alunos-perfil-dados>div { padding:13px 0; border-bottom:1px solid #edf0f2; display:flex; flex-direction:column; gap:5px; min-width:0; }
+.alunos-perfil-dados span { color:#6b7280; font-size:12px; }
+.alunos-perfil-dados strong { font-size:14px; font-weight:700; overflow-wrap:anywhere; }
+.alunos-texto-capitalizado { text-transform:capitalize; }
+.alunos-perfil-editar { display:block; width:100%; border:0; border-radius:10px; padding:14px 16px; background:#c90013; color:#fff; font-weight:800; font-size:15px; cursor:pointer; }
+.alunos-perfil-editar:hover { background:#a5000f; }
+.alunos-perfil-sucesso { border-radius:10px; background:#dcfce7; color:#166534; padding:13px; font-size:13px; line-height:1.45; }
+
+.alunos-perfil-formulario { display:flex; flex-direction:column; gap:13px; }
+.alunos-perfil-formulario h2 { margin:0; color:#191919; font-size:23px; }
+.alunos-perfil-legenda { margin:0 0 4px; color:#687182; font-size:13px; line-height:1.4; }
+.alunos-perfil-formulario label { display:flex; flex-direction:column; gap:6px; color:#374151; font-weight:700; font-size:13px; }
+.alunos-perfil-formulario label input,.alunos-perfil-formulario label select { box-sizing:border-box; width:100%; min-width:0; height:43px; padding:0 11px; border:1px solid #cbd5e1; border-radius:9px; background:#fff; color:#111827; font-size:14px; font-weight:400; }
+.alunos-perfil-formulario label input:focus,.alunos-perfil-formulario label select:focus { outline:none; border-color:#dc2626; box-shadow:0 0 0 3px rgba(220,38,38,.12); }
+.alunos-perfil-formulario label select:disabled { background:#f3f4f6; color:#64748b; }
+.alunos-perfil-forma-graduacao { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:12px; }
+.alunos-perfil-foto-edicao { padding:16px 10px; display:flex; flex-direction:column; align-items:center; gap:14px; border:1px dashed #d4d4d8; border-radius:14px; background:#fafafa; }
+.alunos-perfil-foto-clique { display:flex; flex-direction:column; align-items:center; gap:2px; padding:0; border:0; background:transparent; cursor:pointer; }
+.alunos-perfil-foto-clique > span:last-child { margin-top:0; border-radius:8px; background:#111827; color:#fff; font-size:11px; font-weight:700; padding:6px 12px; }
+.alunos-perfil-foto-acoes { display:flex; flex-wrap:wrap; justify-content:center; gap:8px; }
+.alunos-perfil-foto-acoes button { border:0; border-radius:8px; background:#171717; color:#fff; font-size:12px; font-weight:700; cursor:pointer; padding:10px 12px; }
+.alunos-perfil-foto-acoes button:nth-child(2) { background:#167e3a; }
+.alunos-perfil-foto-acoes button.alunos-perfil-cancelar-foto { color:#9f1239; background:#ffe4e6; }
+.alunos-perfil-foto-acoes button:disabled,.alunos-perfil-foto-clique:disabled { opacity:.6; cursor:wait; }
+.alunos-perfil-nota { font-size:12px; color:#6b7280; line-height:1.5; }
+.alunos-perfil-salvando { color:#166534; font-size:13px; margin:0; }
+.alunos-perfil-forma-acoes { display:flex; gap:10px; padding-top:8px; }
+.alunos-perfil-forma-acoes button { flex:1; border:1px solid #d1d5db; border-radius:10px; padding:13px 9px; background:#fff; color:#374151; font-size:13px; font-weight:800; cursor:pointer; }
+.alunos-perfil-forma-acoes button[type=submit] { flex:1.5; border-color:#b91c1c; background:#c90013; color:#fff; }
+.alunos-perfil-forma-acoes button:disabled { opacity:.6; cursor:wait; }
+
+@media(max-width:768px) {
+  .aluno-gerencia-card { display:flex; gap:8px; flex-direction:column; align-items:stretch; }
+  .aluno-gerencia-identificacao { flex:unset; width:100%; margin:0; }
+  .aluno-acoes-lista { margin-top:8px; justify-content:flex-start; }
+  .aluno-botao-perfil { flex:1; }
+  .alunos-perfil-lateral { width:min(440px,96vw); padding:64px 19px max(28px,env(safe-area-inset-bottom)); }
+}
+@media(max-width:390px) {
+  .alunos-perfil-lateral { width:100vw; }
+  .alunos-perfil-forma-acoes button { font-size:12px; padding:12px 8px; }
+}

@@ -123,8 +123,8 @@ function Dashboard({ user, userType }) {
     );
   }, [user.uid, user.email]);
 
-  const carregarDados = useCallback(async () => {
-    setCarregando(true);
+  const carregarDados = useCallback(async (opcoes = {}) => {
+    if (!opcoes.silencioso) setCarregando(true);
     setErro('');
 
     try {
@@ -139,7 +139,7 @@ function Dashboard({ user, userType }) {
       console.error('Erro ao carregar dashboard:', error);
       setErro('Não foi possível carregar os dados. Confira as regras do Firestore e tente novamente.');
     } finally {
-      setCarregando(false);
+      if (!opcoes.silencioso) setCarregando(false);
     }
   }, [isAdmin, isProfessor, carregarDadosAdmin, carregarDadosProfessor, carregarDadosAluno]);
 
@@ -385,7 +385,7 @@ function Dashboard({ user, userType }) {
       case 'turmas':
         return <Turmas turmas={turmas} reload={carregarDados} isAdmin={isAdmin} professorCidadeId={professorCidadeId} />;
       case 'alunos':
-        return <Alunos alunos={alunos} turmas={turmas} reload={carregarDados} isAdmin={isAdmin} professorCidadeId={professorCidadeId} />;
+        return <Alunos alunos={alunos} turmas={turmas} reload={() => carregarDados({silencioso:true})} isAdmin={isAdmin} professorCidadeId={professorCidadeId} />;
       case 'presenca':
         return <Presenca alunos={alunos} turmas={turmas} reload={carregarDados} currentUserId={user.uid} />;
       case 'config-presenca':
