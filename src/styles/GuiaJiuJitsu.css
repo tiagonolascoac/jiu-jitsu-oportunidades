@@ -1,0 +1,63 @@
+.guia-pagina{max-width:1050px;margin:0 auto;color:#222}
+.guia-cabecalho{padding:26px 28px 0;background:linear-gradient(120deg,#191b22,#2c3038);border-radius:18px 18px 0 0;overflow:hidden;color:#fff;border-top:4px solid #d71920}
+.guia-identificacao{font-size:11px;letter-spacing:.13em;font-weight:800;color:#ff9a9e}
+.guia-cabecalho h1{font-size:clamp(23px,3.6vw,33px);margin:8px 0}
+.guia-cabecalho p{color:#e0e1e4;font-size:14px;line-height:1.55;margin:0 0 20px}
+.guia-abas{display:flex;gap:4px;flex-wrap:wrap}
+.guia-abas button{font-family:inherit;border:0;background:transparent;color:#c6c6c7;padding:14px 17px;font-weight:750;font-size:14px;cursor:pointer;border-radius:9px 9px 0 0;border-bottom:3px solid transparent}
+.guia-abas button.selecionada{background:#fff;color:#191b22;border-bottom-color:#d71920}
+.guia-abas button:hover:not(.selecionada){color:#fff;background:rgba(255,255,255,.08)}
+.guia-documento{background:#fff;border:1px solid #e5e7eb;border-top:0;box-shadow:0 8px 30px rgba(22,31,39,.04);border-radius:0 0 18px 18px;padding:22px 24px 24px}
+.guia-documento-cabecalho{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:20px}
+.guia-tipo{color:#be123c;font-weight:850;letter-spacing:.11em;font-size:10px}
+.guia-documento-cabecalho h2{font-size:clamp(18px,2.3vw,24px);margin:6px 0 6px;color:#111827}
+.guia-documento-cabecalho p{margin:0;line-height:1.55;color:#606978;font-size:13px;max-width:700px}
+.guia-link-pdf{display:inline-flex;align-items:center;justify-content:center;padding:10px 13px;border:1px solid #cbd5e1;border-radius:9px;color:#333;text-decoration:none;font-size:13px;font-weight:700;white-space:nowrap;flex-shrink:0}
+.guia-link-pdf:hover{border-color:#be123c;color:#be123c}
+.guia-sumario{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:18px 0;background:#f5f6f8;border-radius:12px;padding:12px}
+.guia-sumario strong{font-size:12px;color:#49505a;padding:0 4px}
+.guia-sumario button{border:1px solid #e2e5ea;background:#fff;border-radius:8px;font-size:12px;font-weight:700;padding:9px 10px;color:#383c43;cursor:pointer}
+.guia-sumario button:hover{border-color:#d71920;color:#c51926}
+.guia-sumario span{color:#828996;font-size:11px;font-weight:500}
+.guia-barra-leitura{display:flex;gap:12px;justify-content:space-between;align-items:center;background:#f7f8fa;border:1px solid #e3e6eb;border-bottom:0;border-radius:12px 12px 0 0;padding:9px 14px}
+.guia-indicador-pagina{font-size:12px;font-weight:750;color:#3b4452}
+.guia-zoom{display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+.guia-zoom span{font-size:13px;color:#374151;font-weight:750;text-align:center;min-width:44px;font-variant-numeric:tabular-nums}
+.guia-zoom button{width:33px;height:32px;border:1px solid #d9dce3;background:#fff;color:#111;font-size:21px;border-radius:7px;cursor:pointer}
+.guia-zoom button:disabled{opacity:.35;cursor:not-allowed}
+.guia-visualizador{height:auto;max-height:calc(100dvh - 240px);min-height:280px;overflow:auto;border:1px solid #e3e6eb;border-radius:0 0 11px 11px;background:#e8ebf0;position:relative;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.guia-imagem{display:block;height:auto;max-width:none;margin:0 auto;object-fit:contain;box-shadow:0 3px 15px rgba(0,0,0,.09);user-select:none;-webkit-user-select:none}
+.guia-carregando{position:absolute;inset:0;min-height:220px;display:flex;align-items:center;justify-content:center;color:#5f6673;font-size:14px;background:#e8ebf0}
+.guia-dica{font-size:12px;color:#737e8d;margin:12px 0 18px;line-height:1.6}
+.guia-controle-paginas{display:flex;align-items:center;justify-content:space-between;gap:9px;flex-wrap:wrap;padding:13px 0 6px;border-top:1px solid #e9eaee}
+.guia-controle-paginas>button{border:1px solid #d6dbe1;background:white;color:#303541;border-radius:9px;padding:11px 13px;font-weight:750;cursor:pointer}
+.guia-controle-paginas>button:disabled{opacity:.38;cursor:not-allowed}
+.guia-controle-paginas>button:not(:disabled):hover{border-color:#d71920;color:#b91c1c}
+.guia-controle-paginas form{display:flex;gap:7px;align-items:center;justify-content:center}
+.guia-controle-paginas label,.guia-controle-paginas span{font-size:12px;color:#646e7d}
+.guia-controle-paginas input{width:52px;box-sizing:border-box;border-radius:7px;padding:8px 6px;border:1px solid #cbd5e1;font-size:14px;text-align:center;appearance:textfield}
+.guia-controle-paginas input::-webkit-inner-spin-button{display:none}
+.guia-ir{border:0;background:#343b45;color:#fff;border-radius:7px;padding:9px 11px;font-weight:750;cursor:pointer}
+.guia-rodape{display:flex;justify-content:space-between;gap:9px;align-items:center;padding-top:15px;border-top:1px solid #e9eaee;font-size:12px;color:#77808e;margin-top:16px}
+.guia-rodape a{font-weight:750;color:#ba1722;text-decoration:none}
+.guia-rodape a:hover{text-decoration:underline}
+@media (max-width:680px){
+  .guia-cabecalho{padding:19px 15px 0;border-radius:14px 14px 0 0}
+  .guia-cabecalho p{font-size:12px;margin-bottom:16px}
+  .guia-abas{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:3px}
+  .guia-abas button{font-size:12px;padding:12px 5px}
+  .guia-documento{padding:16px 10px 20px;border-radius:0 0 14px 14px}
+  .guia-documento-cabecalho{gap:12px;align-items:flex-start;flex-wrap:wrap}
+  .guia-documento-cabecalho p{font-size:12px}
+  .guia-link-pdf{padding:9px 11px;font-size:12px}
+  .guia-sumario{padding:9px;gap:6px}
+  .guia-sumario strong{width:100%}
+  .guia-sumario button{font-size:11px;padding:8px}
+  .guia-visualizador{max-height:calc(100dvh - 260px);min-height:270px}
+  .guia-indicador-pagina{font-size:11px}
+  .guia-barra-leitura{padding:8px 10px}
+  .guia-controle-paginas{display:grid;grid-template-columns:1fr 1fr}
+  .guia-controle-paginas form{grid-row:1;grid-column:1/-1}
+  .guia-controle-paginas>button{grid-row:2;text-align:center}
+  .guia-rodape{flex-direction:column;align-items:flex-start;line-height:1.4}
+}

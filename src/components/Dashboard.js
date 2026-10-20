@@ -19,6 +19,7 @@ import ConfiguracaoPresenca from './ConfiguracaoPresenca';
 import CheckinAluno from './CheckinAluno';
 import FotoPerfilAluno from './FotoPerfilAluno';
 import TimerLuta from './TimerLuta';
+import GuiaJiuJitsu from './GuiaJiuJitsu';
 import { CIDADES_ACRE } from '../data/cidadesAcre';
 import { dataHojeAcre, diaSeguinte, presencasSemDuplicidade } from '../utils/presencaUtils';
 import '../styles/Dashboard.css';
@@ -31,6 +32,7 @@ function Dashboard({ user, userType }) {
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState('');
   const [menuAberto, setMenuAberto] = useState(false);
+  const [guiaExpandido, setGuiaExpandido] = useState(false);
   const [professorCidadeId, setProfessorCidadeId] = useState('');
 
   const isAdmin = userType === 'admin';
@@ -201,6 +203,35 @@ function Dashboard({ user, userType }) {
     setMenuAberto(false);
   };
 
+  const renderMenuGuia = () => (
+    <div className="sidebar-grupo-guia">
+      <button
+        type="button"
+        className={`sidebar-guia-pai ${pagina.startsWith('guia-') ? 'ativo' : ''}`}
+        onClick={() => setGuiaExpandido((aberto) => !aberto)}
+        aria-expanded={guiaExpandido}
+        aria-controls="menu-guia-conteudo"
+      >
+        <span>📖 Guia do Jiu-Jitsu</span>
+        <span className={`sidebar-guia-seta ${guiaExpandido ? 'expandida' : ''}`} aria-hidden="true">⌄</span>
+      </button>
+      {guiaExpandido && (
+        <div id="menu-guia-conteudo" className="sidebar-guia-filhos">
+          <button
+            type="button"
+            className={pagina === 'guia-faixas' ? 'ativo' : ''}
+            onClick={() => trocarPagina('guia-faixas')}
+          >🥋 Progressão de Faixa</button>
+          <button
+            type="button"
+            className={pagina === 'guia-regras' ? 'ativo' : ''}
+            onClick={() => trocarPagina('guia-regras')}
+          >📜 Regras</button>
+        </div>
+      )}
+    </div>
+  );
+
   const handleLogout = async () => {
     await signOut(auth);
   };
@@ -338,6 +369,14 @@ function Dashboard({ user, userType }) {
   };
 
   const renderConteudo = () => {
+    if (pagina === 'guia-faixas' || pagina === 'guia-regras') {
+      return (
+        <GuiaJiuJitsu
+          secao={pagina === 'guia-regras' ? 'regras' : 'faixas'}
+          onNavegar={trocarPagina}
+        />
+      );
+    }
     if (!isStaff) return renderAluno();
 
     switch (pagina) {
@@ -385,10 +424,12 @@ function Dashboard({ user, userType }) {
             <button className={pagina === 'alunos' ? 'ativo' : ''} onClick={() => trocarPagina('alunos')}>👥 Alunos</button>
             <button className={pagina === 'presenca' ? 'ativo' : ''} onClick={() => trocarPagina('presenca')}>✅ Presença</button>
             <button className={pagina === 'relatorio' ? 'ativo' : ''} onClick={() => trocarPagina('relatorio')}>📊 Relatório</button>
+            {renderMenuGuia()}
           </nav>
         ) : (
           <nav className="sidebar-menu">
-            <button className="ativo">🏠 Meu painel</button>
+            <button className={pagina === 'inicio' ? 'ativo' : ''} onClick={() => trocarPagina('inicio')}>🏠 Meu painel</button>
+            {renderMenuGuia()}
           </nav>
         )}
 

@@ -1,0 +1,217 @@
+/* Progressão de faixas – visual próprio do Jiu-Jitsu Oportunidades */
+.pf-pagina{background:#fff;border:1px solid #e5e7eb;border-top:0;border-radius:0 0 18px 18px;color:#18212e;overflow:hidden;box-shadow:0 10px 30px rgba(20,27,37,.05)}
+.pf-pagina *{box-sizing:border-box}
+.pf-pagina button,.pf-pagina a{font-family:inherit}
+.pf-pagina button:focus-visible,.pf-pagina a:focus-visible{outline:3px solid #e74c55;outline-offset:3px}
+.pf-topo{background:radial-gradient(ellipse at 88% 28%,#3d2227 0%,transparent 50%),linear-gradient(115deg,#151a20,#242a33);padding:32px 36px;min-height:220px;color:#fff;display:flex;position:relative;align-items:center;overflow:hidden}
+.pf-topo-fio{position:absolute;right:-30px;top:-60px;width:290px;height:340px;transform:rotate(40deg);border:1px solid rgba(255,255,255,.08);border-left:24px solid rgba(202,18,32,.2)}
+.pf-topo-conteudo{position:relative;z-index:1;max-width:640px}
+.pf-topo-overline{color:#fca5aa;font-size:10px;font-weight:850;letter-spacing:.16em;display:flex;align-items:center;gap:9px}
+.pf-topo-ponto{display:inline-block;width:7px;height:7px;background:#ec2638;border-radius:50%;box-shadow:0 0 0 4px rgba(225,45,56,.16)}
+.pf-topo h2{font-size:clamp(28px,4.3vw,42px);letter-spacing:-.04em;line-height:1.12;margin:14px 0 10px;font-weight:900}
+.pf-topo h2 em{font-style:normal;color:#ff606b}
+.pf-topo p{font-size:13px;line-height:1.65;color:#d1d5db;margin:0;max-width:450px}
+.pf-topo-simbolo{font-size:clamp(85px,14vw,140px);position:absolute;right:60px;top:50%;transform:translateY(-50%) rotate(-11deg);opacity:.21;filter:grayscale(1)}
+.pf-controles{padding:22px 30px 8px;display:flex;justify-content:space-between;align-items:center;gap:14px}
+.pf-abas{background:#f1f3f6;border:1px solid #e5e7eb;padding:5px;border-radius:13px;display:flex;gap:4px;width:min(430px,100%)}
+.pf-abas button{width:50%;display:flex;align-items:center;justify-content:center;gap:10px;border:1px solid transparent;border-radius:9px;background:transparent;text-align:left;min-height:64px;padding:8px 12px;cursor:pointer;color:#697383}
+.pf-abas button>span:first-child{font-size:22px}
+.pf-abas button>span:last-child{display:flex;flex-direction:column;gap:2px}
+.pf-abas button strong{font-size:14px;color:#4b5563}
+.pf-abas button small{font-size:10px;color:#8b929f}
+.pf-abas button.ativo{background:#fff;border-color:#eceef2;box-shadow:0 3px 10px rgba(23,29,36,.08)}
+.pf-abas button.ativo strong{color:#b21c28}
+.pf-abas button.ativo small{color:#6b7280}
+.pf-abas-legenda{font-size:11px;color:#8b93a0;font-weight:600;text-align:right}
+.pf-content{padding:14px 30px 26px}
+.pf-intro{display:flex;align-items:center;gap:16px;background:linear-gradient(125deg,#fff8f8,#f9fafb);border:1px solid #f3e8e8;border-radius:15px;padding:20px 23px;margin:0 0 27px}
+.pf-intro--adultos{background:linear-gradient(125deg,#fafafa,#f7f8fb);border-color:#e8ebf0}
+.pf-intro-icon{width:51px;height:51px;flex-shrink:0;border-radius:14px;background:#fff;display:grid;place-items:center;font-size:27px;box-shadow:0 4px 11px rgba(16,24,40,.07)}
+.pf-intro>div:nth-child(2){flex:1;min-width:0}
+.pf-overline{font-weight:900;letter-spacing:.13em;font-size:10px;color:#bb2633}
+.pf-intro h3{font-size:clamp(17px,2vw,21px);margin:5px 0 5px;line-height:1.3;letter-spacing:-.02em}
+.pf-intro p{margin:0;font-size:12px;line-height:1.6;color:#677180}
+.pf-intro-etaria{white-space:nowrap;border:1px solid #edc9ce;border-radius:100px;padding:8px 11px;color:#9d1d29;font-size:11px;font-weight:900;background:#fff}
+.pf-etapas{position:relative;display:flex;flex-direction:column;gap:23px;margin-top:5px}
+.pf-etapas:before{content:"";position:absolute;left:21px;top:30px;bottom:25px;width:2px;background:linear-gradient(#e53749,#edd5d9);border-radius:3px}
+.pf-etapa{position:relative;display:grid;grid-template-columns:44px minmax(0,1fr);column-gap:14px}
+.pf-etapa-trilho{display:flex;justify-content:flex-start;padding-top:6px;position:relative;z-index:1}
+.pf-etapa-trilho span{display:grid;place-items:center;width:44px;height:44px;border:5px solid #fff;border-radius:50%;background:#232935;color:#fff;font-size:11px;font-weight:900;box-shadow:0 1px 8px rgba(17,24,39,.12)}
+.pf-etapa-conteudo{min-width:0;background:#fff;border:1px solid #e7e9ed;border-radius:15px;box-shadow:0 3px 12px rgba(17,24,39,.035);padding:17px 19px 18px}
+.pf-etapa-cabecalho{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:15px}
+.pf-etapa-kicker{font-size:10px;font-weight:900;letter-spacing:.09em;color:#9ca3af;margin-bottom:3px}
+.pf-etapa-cabecalho h4{font-size:17px;line-height:1.2;letter-spacing:-.02em;margin:0;color:#1f2937}
+.pf-idade{border-radius:999px;background:#f7f8fa;border:1px solid #e8ebef;white-space:nowrap;padding:8px 11px;color:#788391;font-size:10px}
+.pf-idade strong{color:#414b59}
+.pf-kids-lista{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.pf-kids-lista--unica{grid-template-columns:repeat(3,minmax(0,1fr))}
+.pf-kids-botao{position:relative;border:1px solid #e7e9ed;border-radius:11px;background:#fafbfc;min-width:0;min-height:114px;cursor:pointer;display:flex;align-items:center;flex-direction:column;justify-content:center;gap:11px;padding:10px 7px;transition:background .15s,border-color .15s,box-shadow .15s,transform .15s}
+.pf-kids-botao:hover{border-color:#f2a0a8;background:#fff}
+.pf-kids-botao--ativo{border-color:#d71930;background:#fff9f9;box-shadow:0 0 0 2px rgba(215,25,48,.09)}
+.pf-kids-botao>span:nth-child(2){font-size:12px;font-weight:850;color:#364152;text-align:center}
+.pf-botao-chevron{position:absolute;right:11px;top:7px;font-size:16px;font-weight:850;color:#cbd0d7}
+.pf-kids-botao--ativo .pf-botao-chevron{color:#cc2737;transform:rotate(180deg)}
+.pf-etapa-detalhe{display:flex;align-items:flex-start;gap:10px;border:1px solid #f9e1e4;border-radius:10px;background:#fff8f8;padding:10px 12px;margin-top:12px}
+.pf-detalhe-icone{color:#bc1e31;font-size:16px;line-height:1.5}
+.pf-etapa-detalhe p{font-size:12px;line-height:1.55;color:#6a5156;margin:0}
+.pf-etapa-detalhe strong{color:#9c2432}
+/* Faixas desenhadas com tecido, listras, área de graus e pontas cruzadas. */
+.pf-belt{--pf-cor-faixa:#aaa;display:block;width:190px;height:53px;position:relative;max-width:100%;flex-shrink:0;isolation:isolate}
+.pf-belt-corpo{position:absolute;left:4%;right:4%;top:6px;height:24px;border-radius:4px 2px 2px 4px;background:linear-gradient(180deg,rgba(255,255,255,.24),transparent 32%,rgba(0,0,0,.18) 80%,rgba(0,0,0,.28)),var(--pf-cor-faixa);box-shadow:0 2px 5px rgba(0,0,0,.15);border:1px solid rgba(0,0,0,.20);overflow:hidden}
+.pf-belt-centro{position:absolute;left:2%;right:2%;top:35%;height:29%;background:transparent}
+.pf-belt--branca .pf-belt-centro{background:rgba(255,255,255,.92)}
+.pf-belt--preta .pf-belt-centro{background:#131414}
+.pf-belt--vermelha-preta .pf-belt-corpo{background:repeating-linear-gradient(90deg,#d92530 0 22px,#171719 22px 43px)}
+.pf-belt--vermelha-branca .pf-belt-corpo{background:repeating-linear-gradient(90deg,#e52431 0 22px,#f3f4f6 22px 43px)}
+.pf-belt--vermelha .pf-belt-corpo{background:linear-gradient(180deg,rgba(255,255,255,.22),transparent 50%,rgba(0,0,0,.18)),#da1b26}
+.pf-belt-ponta{position:absolute;right:8px;top:0;height:100%;width:42px;background:#1e2023;border-left:3px solid rgba(255,255,255,.26);display:flex;align-items:center;justify-content:center}
+.pf-belt--preta-adulto .pf-belt-ponta{background:#c71927;border-left-color:#ededed}
+.pf-belt--vermelha-preta .pf-belt-ponta,.pf-belt--vermelha-branca .pf-belt-ponta,.pf-belt--vermelha .pf-belt-ponta{background:#f3f3f3;border-left-color:#cf2532}
+.pf-belt-riscos{height:100%;display:flex;align-items:center;justify-content:center;gap:3px}
+.pf-belt-riscos i{width:3px;height:74%;background:#f8fafc;box-shadow:0 0 1px rgba(0,0,0,.4)}
+.pf-belt--preta-adulto .pf-belt-riscos i,.pf-belt--vermelha .pf-belt-riscos i{background:#fff}
+.pf-belt-no{position:absolute;z-index:3;left:22%;top:4px;height:31px;width:34px;border-radius:4px;transform:rotate(-7deg);background:linear-gradient(110deg,rgba(255,255,255,.28),transparent 45%,rgba(0,0,0,.25)),var(--pf-cor-faixa);border:1px solid rgba(0,0,0,.19);box-shadow:1px 2px 5px rgba(0,0,0,.1)}
+.pf-belt-cauda{position:absolute;z-index:-1;top:28px;left:25%;width:17px;height:25px;border-radius:1px 2px 3px 3px;background:linear-gradient(90deg,rgba(0,0,0,.16),transparent 44%),var(--pf-cor-faixa);border:1px solid rgba(0,0,0,.16)}
+.pf-belt-cauda--frente{transform:rotate(28deg);left:28%;z-index:2}
+.pf-belt-cauda--tras{transform:rotate(-28deg);left:19%}
+.pf-belt--mini{width:135px;height:41px}
+.pf-belt--mini .pf-belt-corpo{height:20px;top:4px}
+.pf-belt--mini .pf-belt-no{width:27px;height:25px;top:3px}
+.pf-belt--mini .pf-belt-cauda{height:17px;top:23px;width:14px}
+.pf-belt--mini .pf-belt-ponta{width:34px}
+.pf-notas-kids{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:24px}
+.pf-nota-ilustracao{background:#f6f7fa;border-radius:12px;border:1px solid #e8eaef;padding:16px 18px}
+.pf-nota-ilustracao>span{display:block;color:#c32a36;font-size:19px;font-weight:900;margin-bottom:7px}
+.pf-nota-ilustracao strong{display:block;font-size:13px;color:#303947}
+.pf-nota-ilustracao p{font-size:12px;line-height:1.6;color:#687382;margin:6px 0 0}
+.pf-alerta{margin-top:18px;padding:13px 17px;border-radius:10px;border:1px solid #f0e2c6;background:#fffaf0}
+.pf-alerta strong{font-size:12px;color:#885c18}
+.pf-alerta p{margin:4px 0 0;font-size:11px;line-height:1.65;color:#79684a}
+.pf-fonte{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;border-top:1px solid #ecedf0;margin-top:20px;padding-top:17px;color:#818a97;font-size:11px}
+.pf-fonte a{color:#b42330;font-weight:800;text-decoration:none}
+.pf-fonte a:hover{text-decoration:underline}
+.pf-mini-explicacao{background:#f5f7fb;border:1px solid #e7ebf0;padding:12px 15px;border-radius:10px;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;margin:-12px 0 17px}
+.pf-mini-explicacao strong{font-size:11px;color:#363f4e}
+.pf-mini-explicacao span{font-size:11px;color:#737d8b;line-height:1.6}
+.pf-adultos-lista{display:flex;flex-direction:column;gap:9px}
+.pf-adulto-item{border:1px solid #e5e7eb;border-radius:13px;overflow:hidden;transition:border-color .15s}
+.pf-adulto-item--ativo{border-color:#d64c58;box-shadow:0 5px 17px rgba(41,49,61,.045)}
+.pf-adulto-cabecalho{width:100%;min-width:0;border:0;cursor:pointer;background:#fff;display:flex;gap:16px;align-items:center;padding:15px 18px;text-align:left;color:#303642}
+.pf-adulto-item--ativo .pf-adulto-cabecalho{background:#fffbfb}
+.pf-adulto-cabecalho:hover{background:#f9fafb}
+.pf-adulto-numero{font-size:14px;font-weight:900;color:#bec4cf;min-width:22px}
+.pf-adulto-desenho{width:139px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.pf-adulto-titulos{display:flex;flex-direction:column;gap:4px;flex:1;min-width:0}
+.pf-adulto-titulos strong{font-size:15px}
+.pf-adulto-titulos small{font-size:11px;color:#929ba8}
+.pf-tempo-selo{font-weight:850;border-radius:999px;background:#f3f4f6;border:1px solid #e9edf2;color:#646d7b;padding:7px 10px;white-space:nowrap;font-size:10px}
+.pf-adulto-item--ativo .pf-tempo-selo{background:#fff0f1;color:#b22531;border-color:#f8dadd}
+.pf-adulto-chevron{font-size:21px;color:#b9bec7;transition:transform .15s}
+.pf-adulto-item--ativo .pf-adulto-chevron{color:#bf2433;transform:rotate(180deg)}
+.pf-adulto-expandido{border-top:1px solid #fae8e9;background:linear-gradient(#fffdfd,#fff);padding:18px 24px 21px 58px}
+.pf-adulto-expandido>p{font-size:12px;line-height:1.65;color:#677180;margin:6px 0 13px}
+.pf-adulto-expandido .pf-tempo-linha{color:#9c2330;font-weight:800;font-size:12px;margin:0}
+.pf-graus-caixa{background:#f8f9fb;border:1px solid #edf0f3;border-radius:12px;padding:16px;display:flex;flex-direction:column;align-items:center;gap:12px;margin-top:14px}
+.pf-graus-topo{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.pf-graus-topo>div{display:flex;flex-direction:column;gap:3px}
+.pf-graus-topo strong{font-size:12px}
+.pf-graus-topo small{font-size:10px;color:#89939e}
+.pf-grau-atual{background:#fff;border-radius:8px;border:1px solid #e5e7eb;font-size:11px;padding:7px 10px;color:#7c2331;font-weight:800;white-space:nowrap}
+.pf-graus-botoes{display:flex;justify-content:center;gap:6px;flex-wrap:wrap}
+.pf-graus-botoes button{cursor:pointer;padding:7px 10px;min-width:39px;border:1px solid #dae0e7;background:#fff;border-radius:8px;font-size:11px;font-weight:800;color:#697386}
+.pf-graus-botoes button.ativo{background:#b92331;border-color:#b92331;color:#fff}
+.pf-altas{margin-top:27px;padding:22px 23px;background:linear-gradient(150deg,#222935,#161b24);border-radius:16px;color:#fff;position:relative;overflow:hidden}
+.pf-altas-topo{position:relative;z-index:1}
+.pf-altas-topo .pf-overline{color:#ff8b96}
+.pf-altas h3{font-size:20px;letter-spacing:-.02em;margin:6px 0}
+.pf-altas p{color:#bcc3ce;font-size:12px;line-height:1.6;margin:0 0 15px}
+.pf-altas-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.pf-alta-card{cursor:pointer;text-align:left;background:#313844;color:#fff;border:1px solid #49505c;border-radius:12px;padding:16px 13px 14px;display:flex;flex-direction:column;gap:7px;align-items:flex-start;min-width:0}
+.pf-alta-card:hover,.pf-alta-card--ativo{background:#3a414f;border-color:#ec747e}
+.pf-alta-topo{display:flex;justify-content:space-between;align-items:center;width:100%;gap:4px;color:#ff8c94;font-size:11px}
+.pf-alta-topo span{font-size:16px}
+.pf-alta-card .pf-belt{margin:8px 0 1px}
+.pf-alta-nome{font-size:12px;font-weight:900}
+.pf-alta-idade{font-size:10px;color:#b9c1cd}
+.pf-alta-detalhe{display:flex;flex-direction:column;gap:4px;padding:9px 0 0;border-top:1px solid #626a75;font-size:11px;color:#ffe4e5;width:100%}
+.pf-alta-detalhe span{color:#c3cbd6;font-size:10px}
+@media(max-width:800px){
+ .pf-topo{padding:26px 24px}
+ .pf-controles{padding:20px 20px 8px}
+ .pf-content{padding:14px 20px 22px}
+ .pf-intro-etaria{display:none}
+ .pf-abas-legenda{display:none}
+ .pf-adulto-cabecalho{gap:10px;padding:14px 11px}
+ .pf-adulto-desenho{width:112px}
+ .pf-adulto-desenho .pf-belt{transform:scale(.82);transform-origin:center}
+ .pf-adulto-numero{min-width:20px}
+}
+@media(max-width:580px){
+ .pf-pagina{border-radius:0 0 14px 14px}
+ .pf-topo{min-height:165px;padding:26px 18px}
+ .pf-topo h2{font-size:29px;margin:12px 0 10px}
+ .pf-topo p{font-size:12px;max-width:300px}
+ .pf-topo-simbolo{right:4px;opacity:.13;font-size:95px}
+ .pf-controles{padding:15px 12px 8px}
+ .pf-abas{width:100%;padding:4px}
+ .pf-abas button{min-height:60px;padding:8px 7px;gap:7px}
+ .pf-abas button>span:first-child{font-size:19px}
+ .pf-abas button strong{font-size:13px}
+ .pf-abas button small{font-size:9px}
+ .pf-content{padding:9px 12px 19px}
+ .pf-intro{padding:14px;gap:10px;margin-bottom:18px}
+ .pf-intro-icon{width:43px;height:43px;font-size:23px}
+ .pf-intro h3{font-size:16px}
+ .pf-intro p{font-size:11px}
+ .pf-overline{font-size:9px}
+ .pf-etapas{gap:13px}
+ .pf-etapas:before{left:15px}
+ .pf-etapa{grid-template-columns:33px minmax(0,1fr);gap:6px}
+ .pf-etapa-trilho span{width:33px;height:33px;border:4px solid white;font-size:9px}
+ .pf-etapa-conteudo{padding:13px 9px 12px;border-radius:12px}
+ .pf-etapa-cabecalho{gap:5px;align-items:flex-start;margin-bottom:11px}
+ .pf-etapa-kicker{font-size:9px}
+ .pf-etapa-cabecalho h4{font-size:15px}
+ .pf-idade{font-size:9px;padding:5px 7px;display:flex;flex-direction:column;white-space:normal;text-align:right;line-height:1.3}
+ .pf-kids-lista{grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+ .pf-kids-lista--unica{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .pf-kids-botao{padding:6px 3px;gap:0;min-height:93px}
+ .pf-kids-botao .pf-belt{transform:scale(.64);margin:-6px -12px -3px;transform-origin:center;max-width:none}
+ .pf-kids-botao>span:nth-child(2){font-size:10px;line-height:1.2;min-height:24px;padding:0 2px;display:flex;align-items:center;justify-content:center}
+ .pf-botao-chevron{font-size:12px;top:0;right:5px}
+ .pf-etapa-detalhe{margin-top:9px;padding:8px 9px;gap:5px}
+ .pf-etapa-detalhe p{font-size:10px}
+ .pf-notas-kids{grid-template-columns:1fr;gap:8px;margin-top:18px}
+ .pf-nota-ilustracao{padding:13px}
+ .pf-nota-ilustracao>span{margin-bottom:4px}
+ .pf-nota-ilustracao p{font-size:11px}
+ .pf-mini-explicacao{margin:-4px 0 13px;padding:10px 11px}
+ .pf-adultos-lista{gap:7px}
+ .pf-adulto-cabecalho{gap:5px;padding:11px 7px}
+ .pf-adulto-numero{min-width:14px;font-size:10px}
+ .pf-adulto-desenho{width:76px}
+ .pf-adulto-desenho .pf-belt{transform:scale(.6);max-width:none;margin:-6px -30px}
+ .pf-adulto-titulos strong{font-size:12px}
+ .pf-adulto-titulos small{font-size:9px}
+ .pf-tempo-selo{font-size:9px;padding:5px 6px;white-space:normal;text-align:center;max-width:82px}
+ .pf-adulto-chevron{font-size:14px}
+ .pf-adulto-expandido{padding:13px 11px 15px}
+ .pf-adulto-expandido>p{font-size:11px}
+ .pf-graus-caixa{padding:11px;gap:10px}
+ .pf-graus-topo strong{font-size:11px}
+ .pf-graus-topo small{font-size:9px}
+ .pf-grau-atual{padding:6px;font-size:9px}
+ .pf-graus-botoes{gap:4px}
+ .pf-graus-botoes button{min-width:36px;padding:7px 7px}
+ .pf-altas{padding:17px 12px;border-radius:12px}
+ .pf-altas h3{font-size:18px}
+ .pf-altas-grid{grid-template-columns:1fr;gap:7px}
+ .pf-alta-card{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;padding:10px 12px;align-items:center}
+ .pf-alta-topo{grid-column:1/-1}
+ .pf-alta-card .pf-belt{grid-column:2;grid-row:2 /span 2;margin:0;transform:scale(.7);transform-origin:right center}
+ .pf-alta-nome,.pf-alta-idade{grid-column:1}
+ .pf-alta-detalhe{grid-column:1/-1}
+ .pf-alerta{padding:12px}
+ .pf-fonte{font-size:10px}
+}
+@media (prefers-reduced-motion:reduce){.pf-kids-botao,.pf-adulto-item,.pf-adulto-chevron{transition:none}}
