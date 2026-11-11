@@ -123,8 +123,8 @@ function Dashboard({ user, userType }) {
     );
   }, [user.uid, user.email]);
 
-  const carregarDados = useCallback(async (opcoes = {}) => {
-    if (!opcoes.silencioso) setCarregando(true);
+  const carregarDados = useCallback(async () => {
+    setCarregando(true);
     setErro('');
 
     try {
@@ -139,7 +139,7 @@ function Dashboard({ user, userType }) {
       console.error('Erro ao carregar dashboard:', error);
       setErro('Não foi possível carregar os dados. Confira as regras do Firestore e tente novamente.');
     } finally {
-      if (!opcoes.silencioso) setCarregando(false);
+      setCarregando(false);
     }
   }, [isAdmin, isProfessor, carregarDadosAdmin, carregarDadosProfessor, carregarDadosAluno]);
 
@@ -287,7 +287,7 @@ function Dashboard({ user, userType }) {
         <div className="quick-actions-grid">
           {isAdmin && <button onClick={() => trocarPagina('professores')}>👨‍🏫 Gerenciar professores</button>}
           <button onClick={() => trocarPagina('presenca')}>✅ Lançar presença</button>
-          {isAdmin && <button onClick={() => trocarPagina('config-presenca')}>📍 Configurar local</button>}
+          <button onClick={() => trocarPagina('config-presenca')}>📍 Configurar local</button>
           <button onClick={() => trocarPagina('alunos')}>👥 Gerenciar alunos</button>
           <button onClick={() => trocarPagina('turmas')}>🥋 Gerenciar turmas</button>
           <button onClick={() => trocarPagina('relatorio')}>📊 Ver frequência</button>
@@ -385,11 +385,11 @@ function Dashboard({ user, userType }) {
       case 'turmas':
         return <Turmas turmas={turmas} reload={carregarDados} isAdmin={isAdmin} professorCidadeId={professorCidadeId} />;
       case 'alunos':
-        return <Alunos alunos={alunos} turmas={turmas} reload={() => carregarDados({silencioso:true})} isAdmin={isAdmin} professorCidadeId={professorCidadeId} />;
+        return <Alunos alunos={alunos} turmas={turmas} reload={carregarDados} isAdmin={isAdmin} professorCidadeId={professorCidadeId} />;
       case 'presenca':
         return <Presenca alunos={alunos} turmas={turmas} reload={carregarDados} currentUserId={user.uid} />;
       case 'config-presenca':
-        return isAdmin ? <ConfiguracaoPresenca user={user} /> : renderInicioStaff();
+        return <ConfiguracaoPresenca user={user} isAdmin={isAdmin} turmas={turmas} />;
       case 'relatorio':
         return <Relatorio alunos={alunos} presencas={presencas} />;
       default:
@@ -419,7 +419,7 @@ function Dashboard({ user, userType }) {
           <nav className="sidebar-menu">
             <button className={pagina === 'inicio' ? 'ativo' : ''} onClick={() => trocarPagina('inicio')}>🏠 Início</button>
             {isAdmin && <button className={pagina === 'professores' ? 'ativo' : ''} onClick={() => trocarPagina('professores')}>👨‍🏫 Professores</button>}
-            {isAdmin && <button className={pagina === 'config-presenca' ? 'ativo' : ''} onClick={() => trocarPagina('config-presenca')}>📍 Local da presença</button>}
+            <button className={pagina === 'config-presenca' ? 'ativo' : ''} onClick={() => trocarPagina('config-presenca')}>📍 Local da presença</button>
             <button className={pagina === 'turmas' ? 'ativo' : ''} onClick={() => trocarPagina('turmas')}>🥋 Turmas</button>
             <button className={pagina === 'alunos' ? 'ativo' : ''} onClick={() => trocarPagina('alunos')}>👥 Alunos</button>
             <button className={pagina === 'presenca' ? 'ativo' : ''} onClick={() => trocarPagina('presenca')}>✅ Presença</button>

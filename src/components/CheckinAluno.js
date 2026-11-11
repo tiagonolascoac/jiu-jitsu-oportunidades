@@ -252,9 +252,24 @@ function CheckinAluno({ aluno, user, onSuccess }) {
 
       // Firestore é consultado em paralelo com o GPS, já inicializado acima.
       // A distância só será avaliada depois de ler o raio configurado.
+      // Local exclusivo por turma: não mistura Rio Branco, Plácido de Castro
+      // ou academias diferentes. Mantém o local geral para cadastros legados.
+      const buscarLocal = async () => {
+        if (aluno.turmaId) {
+          try {
+            const localTurma = await getDoc(doc(db, 'locaisCheckin', aluno.turmaId));
+            if (localTurma.exists()) return localTurma;
+          } catch (erro) {
+            if (erro.code !== 'permission-denied') throw erro;
+            // Compatibilidade na transição, antes da publicação das novas regras.
+            console.warn('Sem acesso ao local específico da turma; verificando local geral.', erro);
+          }
+        }
+        return getDoc(doc(db, 'configuracoes', 'presenca'));
+      };
       const [existente, configSnap] = await Promise.all([
         registroDoDia(aluno.id, data),
-        getDoc(doc(db, 'configuracoes', 'presenca')),
+        buscarLocal(),
       ]);
 
       // Quando o professor já fez o lançamento, não cria outro.
@@ -340,7 +355,7 @@ function CheckinAluno({ aluno, user, onSuccess }) {
       console.error('Erro no check-in:', e);
       setEstado('error');
       if (e.message === 'CONFIG') {
-        setMensagem('O administrador ainda não configurou o local de presença.');
+        setMensagem('Ainda não há local de presença disponível para sua turma. Peça ao professor ou administrador para configurar.');
       } else if (e.message === 'GEO') {
         setMensagem('Este dispositivo não oferece acesso à localização.');
       } else if (e.message === 'HTTPS') {
@@ -383,7 +398,7 @@ function CheckinAluno({ aluno, user, onSuccess }) {
       } else if (e.code === 2 || e.code === 'POSITION_UNAVAILABLE') {
         setMensagem('Localização indisponível no momento. Ative o GPS e tente novamente.');
       } else if (e.code === 'permission-denied') {
-        setMensagem('O FIREBASE bloqueou a consulta ou gravação da presença (Firestore). Isso é diferente da permissão de GPS: peça ao administrador para conferir as regras da coleção presencas e de configuracoes/presenca.');
+        setMensagem('O FIREBASE bloqueou a leitura ou gravação. Isso é diferente da permissão do GPS: peça ao administrador para conferir as regras de presencas, locaisCheckin e configuracoes/presenca.');
       } else {
         setMensagem('Não foi possível registrar a presença. Verifique sua conexão e tente novamente.');
       }
